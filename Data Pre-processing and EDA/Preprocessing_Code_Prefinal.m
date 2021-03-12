@@ -63,32 +63,32 @@ for i=1:length(folders) %Loop through folders
 end
 
 
-%Split original dataset into train, validation and test datasets based on the classes.
-a = unique(labels,'stable'); %extract unique classes in original dataset
-amount = cell2mat(cellfun(@(x) sum(ismember(labels,x)),a,'un',0));%determine number of examples per class in original dataset
-for i=1:length(a)
-    %Work out indices location of each dataset in original dataset
-    val_len = floor(amount(i)*val_perc/100);
-    test_len = floor(amount(i)*test_perc/100);
-    train_len = amount(i)-val_len-test_len;
-    indices = find(strcmp(labels, char(a(i))));
-    train_ind = indices(1:train_len);
-    val_ind = indices(train_len+1:(train_len+val_len));
-    test_ind = indices((train_len+val_len+1):(train_len+val_len+test_len));
-    %Split into three datasets
-    for j = 1:train_len
-        train_data = [train_data;data(train_ind(j))];
-        train_labels = [train_labels;labels(train_ind(j))];
-    end
-    for j=1:val_len
-        val_data = [val_data;data(val_ind(j))];
-        val_labels = [val_labels;labels(val_ind(j))];
-    end
-    for j=1:test_len
-        test_data = [test_data;data(test_ind(j))];
-        test_labels = [test_labels;labels(test_ind(j))];
-    end        
-end
+% %Split original dataset into train, validation and test datasets based on the classes.
+% a = unique(labels,'stable'); %extract unique classes in original dataset
+% amount = cell2mat(cellfun(@(x) sum(ismember(labels,x)),a,'un',0));%determine number of examples per class in original dataset
+% for i=1:length(a)
+%     %Work out indices location of each dataset in original dataset
+%     val_len = floor(amount(i)*val_perc/100);
+%     test_len = floor(amount(i)*test_perc/100);
+%     train_len = amount(i)-val_len-test_len;
+%     indices = find(strcmp(labels, char(a(i))));
+%     train_ind = indices(1:train_len);
+%     val_ind = indices(train_len+1:(train_len+val_len));
+%     test_ind = indices((train_len+val_len+1):(train_len+val_len+test_len));
+%     %Split into three datasets
+%     for j = 1:train_len
+%         train_data = [train_data;data(train_ind(j))];
+%         train_labels = [train_labels;labels(train_ind(j))];
+%     end
+%     for j=1:val_len
+%         val_data = [val_data;data(val_ind(j))];
+%         val_labels = [val_labels;labels(val_ind(j))];
+%     end
+%     for j=1:test_len
+%         test_data = [test_data;data(test_ind(j))];
+%         test_labels = [test_labels;labels(test_ind(j))];
+%     end        
+% end
 %Remove examples based on manual review (Uncomment to obtain final preprocessing code)
 % load('train_remove_index.mat')
 % load('val_remove_index.mat')
@@ -97,13 +97,18 @@ end
 % val_data(val_remove_index)=[];
 % val_labels(val_remove_index)=[];
 
-%Save as .mat file
-save('train_data.mat', 'train_data', '-v7.3');
-save('train_labels.mat', 'train_labels', '-v7.3');
-save('val_data.mat', 'val_data', '-v7.3');
-save('val_labels.mat', 'val_labels', '-v7.3');
-save('test_data.mat', 'test_data', '-v7.3');
-save('test_labels.mat', 'test_labels', '-v7.3');
+% %Save as .mat file
+% save('train_data.mat', 'train_data', '-v7.3');
+% save('train_labels.mat', 'train_labels', '-v7.3');
+% save('val_data.mat', 'val_data', '-v7.3');
+% save('val_labels.mat', 'val_labels', '-v7.3');
+% save('test_data.mat', 'test_data', '-v7.3');
+% save('test_labels.mat', 'test_labels', '-v7.3');
+
+save('Data/havs_data.mat', 'data', '-v7.3')
+save('Data/havs_labels.mat', 'labels', '-v7.3')
+
+
 %Determine number of diffrent classes
 a=unique(labels,'stable');
 amount = cellfun(@(x) sum(ismember(labels,x)),a,'un',0);
