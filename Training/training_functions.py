@@ -69,7 +69,7 @@ def train_model(num_epochs, train_loader, criterion, optimizer, device, model_on
         print('Epoch: {}/{} \t Training Loss: {}, Accuracy: {}'.format(epoch, num_epochs, train_loss, 100 * correct / total))
 
 
-def eval(test_loader, device, model_on_device):
+def evaluate_model(test_loader, device, model_on_device):
     """Evaluate Performance on test set"""
     correct = 0
     total = 0
@@ -98,10 +98,6 @@ def get_class_weights(y_train, device):
     class_weights = torch.from_numpy(class_weights).float().to(device)
 
     return class_weights
-
-def nyasha():
-    pass
-
 
 def visualise_cae_performance(data_loader, device, model_on_device, batch_size, img_width, img_height):
     """Visualise how the current CAE model is performing"""
@@ -134,3 +130,16 @@ def visualise_cae_performance(data_loader, device, model_on_device, batch_size, 
         plt.imshow(np.squeeze(output[idx]))
         ax.set_title(labels[idx])
     plt.show()
+
+def get_train_test_data(compressed_file_path):
+    # Extracting data from the compressed file
+
+    processed_data = np.load(compressed_file_path) # Unzipping
+    x_train = processed_data["x_train"]
+    x_test = processed_data["x_test"]
+    x_val = processed_data["x_val"] 
+    y_train = processed_data["y_train"]
+    y_test = processed_data["y_test"]
+    y_val = processed_data["y_val"]
+
+    return (x_train, x_test, x_val, y_train, y_test, y_val)
