@@ -219,7 +219,7 @@ class Decoder_3(nn.Module):
         
 class CAE_3(nn.Module):
     def __init__(self):
-        super(CAE_2, self).__init__()
+        super(CAE_3, self).__init__()
         
         self.encoder = Encoder_3()
         self.decoder = Decoder_3()
@@ -229,11 +229,6 @@ class CAE_3(nn.Module):
         x = self.decoder(x)
         
         return x
-
-
-
-
-
 
 # Model 4
 

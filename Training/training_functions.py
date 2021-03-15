@@ -2,6 +2,8 @@ import torch
 from sklearn.utils import class_weight
 import numpy as np
 import matplotlib.pyplot as plt
+from torch.utils.tensorboard import SummaryWriter
+import torch.optim as optim
 
 def get_device():
     """Checks the device that cuda is running on"""
@@ -47,13 +49,20 @@ def train_cae(num_epochs, train_loader, criterion, optimizer, device, model_on_d
             )
             )
 
-def train_model(num_epochs, train_loader, criterion, optimizer, device, model_on_device):
+def train_model(num_epochs, train_loader, val_loader, criterion, optimizer, device, model_on_device):
 
+    writer = SummaryWriter(comment=f"_model_{model_on_device._get_name()}_criterion_{criterion._get_name()}_optimizer_{get_info(optimizer)}")
+    num_batches = len(train_loader)
     for epoch in range(1, num_epochs+1):
+        model_on_device.train() # Turn on Dropout, BatchNorm etc
+        train_loss_per_batch = np.empty(num_batches)
+        accuracy_per_batch = np.empty(num_batches)
         train_loss = 0
         correct = 0
         total = 0
-        for images, labels in train_loader:
+        accuracy = 0
+        
+        for batch_idx, (images, labels) in enumerate(train_loader):
             images = images.to(device, dtype=torch.float)
             labels = labels.to(device)
             output = model_on_device(images)
@@ -65,29 +74,51 @@ def train_model(num_epochs, train_loader, criterion, optimizer, device, model_on
             loss.backward()
             optimizer.step()
             train_loss += loss.item()/images.shape[0]
+            accuracy = 100 * correct / total
+
+            train_loss_per_batch[batch_idx] =  train_loss
+            accuracy_per_batch[batch_idx] = accuracy
+
+        avg_epoch_train_loss = np.mean(train_loss_per_batch)
+        avg_epoch_accuracy = np.mean(accuracy_per_batch)
+
+        print("Evaluating performance on validation data")
+        test_loss, test_accuracy = evaluate_model(val_loader, device, model_on_device, criterion)
+
+        writer.add_scalar('Loss/Train', avg_epoch_train_loss, epoch)
+        writer.add_scalar('Accuracy/Train', avg_epoch_accuracy, epoch)
+        writer.add_scalar('Loss/Validation', test_loss, epoch)
+        writer.add_scalar('Accuracy/Validation', test_accuracy, epoch)
         
-        print('Epoch: {}/{} \t Training Loss: {}, Accuracy: {}'.format(epoch, num_epochs, train_loss, 100 * correct / total))
+        print('Epoch: {}/{} \t Training Loss: {:.4f}, Accuracy: {:.2f}, Testing Loss: {:.4f}, Accuracy: {:.2f}'.format(epoch, num_epochs, train_loss, accuracy, test_loss, test_accuracy))
+    
+    writer.close()
 
-
-def evaluate_model(test_loader, device, model_on_device):
+def evaluate_model(loader, device, model_on_device, criterion):
     """Evaluate Performance on test set"""
+    model_on_device.eval() # Turn off gradient computations
+    num_batches = len(loader)
     correct = 0
     total = 0
+    running_loss = 0
     with torch.no_grad():
-        for data in test_loader:
+        for data in loader:
             images, labels = data
             images = images.to(device).float()
             labels = labels.to(device)
             outputs = model_on_device(images)
+            loss = criterion(outputs, labels)
             _, predicted = torch.max(outputs.data, 1)
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
+
+            running_loss += loss.item()
 
     accuracy = 100 * correct / total       
     print('Accuracy of the network on the test images: %d %%' % (
         accuracy))
 
-    return accuracy
+    return running_loss / num_batches, accuracy 
 
 
 def get_class_weights(y_train, device):
@@ -143,3 +174,12 @@ def get_train_test_data(compressed_file_path):
     y_val = processed_data["y_val"]
 
     return (x_train, x_test, x_val, y_train, y_test, y_val)
+
+def get_info(optimizer):
+    format_string = optimizer.__class__.__name__ + '_'
+    for i, group in enumerate(optimizer.param_groups):
+        for key in sorted(group.keys()):
+            if key != 'params':
+                format_string += '_{0}_{1}'.format(key, group[key])
+    format_string += ''
+    return format_string
