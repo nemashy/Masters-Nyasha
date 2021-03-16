@@ -324,3 +324,61 @@ class CAE_4(nn.Module):
         
         return x
 
+
+# CAE 5
+
+class Encoder_5(nn.Module):
+    def __init__(self):
+        super(Encoder_5, self).__init__()
+        
+        self.conv1 = nn.Conv2d(1, 50, 5, stride=1, padding=1)
+        self.conv2 = nn.Conv2d(50, 30, 3, stride=1, padding=1)
+
+        self.pool1 = nn.MaxPool2d(2, stride=2) 
+        
+    def forward(self, img):
+        x = self.conv1(img)
+        x = F.relu(x)
+
+        x = self.pool1(x)
+
+        x = self.conv2(x)
+        x = F.relu(x)        
+        
+        return x
+
+class Decoder_5(nn.Module):
+    def __init__(self):
+        super(Decoder_5, self).__init__()
+        
+        self.deconv2 = nn.ConvTranspose2d(30, 50, 3, stride=1, padding=1)
+        self.deconv1 = nn.ConvTranspose2d(50, 1, 5, stride=1, padding=1)
+        
+        self.upsample2 = nn.Upsample(scale_factor=2, mode='bilinear')
+        self.upsample1 = nn.Upsample(scale_factor=2, mode='bilinear')
+
+        
+    def forward(self, encode):
+        
+        x = self.deconv2(encode)
+        x = F.relu(x)
+        
+        x = self.upsample1(x)
+        
+        x = self.deconv1(x)
+        x = torch.sigmoid(x)
+        
+        return x
+        
+class CAE_5(nn.Module):
+    def __init__(self):
+        super(CAE_5, self).__init__()
+        
+        self.encoder = Encoder_5()
+        self.decoder = Decoder_5()
+        
+    def forward(self, img):
+        x = self.encoder(img)
+        x = self.decoder(x)
+        
+        return x
