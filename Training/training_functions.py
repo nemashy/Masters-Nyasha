@@ -3,7 +3,6 @@ from sklearn.utils import class_weight
 import numpy as np
 import matplotlib.pyplot as plt
 from torch.utils.tensorboard import SummaryWriter
-import torch.optim as optim
 
 def get_device():
     """Checks the device that cuda is running on"""
