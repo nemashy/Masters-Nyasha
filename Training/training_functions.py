@@ -49,8 +49,8 @@ def train_cae(num_epochs, train_loader, criterion, optimizer, device, model_on_d
             )
 
 def train_model(num_epochs, train_loader, val_loader, criterion, optimizer, device, model_on_device):
-
-    writer = SummaryWriter(comment=f"_model_{model_on_device._get_name()}_criterion_{criterion._get_name()}_optimizer_{get_info(optimizer)}")
+    optimizer_name, optimizer_params_dict = get_info(optimizer)
+    writer = SummaryWriter(comment=f"_model_{model_on_device._get_name()}_criterion_{criterion._get_name()}_optimizer_{optimizer_name}")
     num_batches = len(train_loader)
     for epoch in range(1, num_epochs+1):
         model_on_device.train() # Turn on Dropout, BatchNorm etc
@@ -81,7 +81,6 @@ def train_model(num_epochs, train_loader, val_loader, criterion, optimizer, devi
         avg_epoch_train_loss = np.mean(train_loss_per_batch)
         avg_epoch_accuracy = np.mean(accuracy_per_batch)
 
-        print("Evaluating performance on validation data")
         test_loss, test_accuracy = evaluate_model(val_loader, device, model_on_device, criterion)
 
         writer.add_scalar('Loss/Train', avg_epoch_train_loss, epoch)
@@ -90,7 +89,10 @@ def train_model(num_epochs, train_loader, val_loader, criterion, optimizer, devi
         writer.add_scalar('Accuracy/Validation', test_accuracy, epoch)
         
         print('Epoch: {}/{} \t Training Loss: {:.4f}, Accuracy: {:.2f}, Testing Loss: {:.4f}, Accuracy: {:.2f}'.format(epoch, num_epochs, train_loss, accuracy, test_loss, test_accuracy))
-    
+    ## Please revisit this error in names -> test/val
+
+    writer.add_text('optimzer_parameters', str(optimizer_params_dict))
+    writer.add_text('model', str(model_on_device))
     writer.close()
 
 def evaluate_model(loader, device, model_on_device, criterion):
@@ -114,8 +116,6 @@ def evaluate_model(loader, device, model_on_device, criterion):
             running_loss += loss.item()
 
     accuracy = 100 * correct / total       
-    print('Accuracy of the network on the test images: %d %%' % (
-        accuracy))
 
     return running_loss / num_batches, accuracy 
 
@@ -175,10 +175,7 @@ def get_train_test_data(compressed_file_path):
     return (x_train, x_test, x_val, y_train, y_test, y_val)
 
 def get_info(optimizer):
-    format_string = optimizer.__class__.__name__ + '_'
-    for i, group in enumerate(optimizer.param_groups):
-        for key in sorted(group.keys()):
-            if key != 'params':
-                format_string += '_{0}_{1}'.format(key, group[key])
-    format_string += ''
-    return format_string
+    optimizer_name = optimizer.__class__.__name__
+    optimizer_params_dict = {key:group[key] for group in (optimizer.param_groups) for key in sorted(group.keys()) if key != 'params'}
+
+    return optimizer_name, optimizer_params_dict

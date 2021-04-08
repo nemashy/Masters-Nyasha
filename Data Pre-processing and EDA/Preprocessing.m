@@ -1,29 +1,30 @@
 clear
 path = 'C:\Users\nyasha\Desktop\Thesis\Radar-Classfication-Project-master\Data';%location of radar data
-folders = dir2(strcat(path,'\*'));%extract folder folder info 
-data = {};%All data
-labels = {};%%All labels
-train_data = {};train_labels={};val_data={};val_labels={};test_data={};test_labels={};%Split data and labels
-Time_limit = 3.64;%3.65time limit is seconds
-nfft = 128;%Number of frequancy points length
-OL = 60;%Overlap of bins
-win_len = 80;%Window function length
-win = hamming(win_len);%Window
-val_perc = 10;%Validation data percentage
-test_perc = 10;%test data percentage
-count = 0;%Number of examples skipped
-countclass = {};%classes of the examples skipped
-Example_overlap = 0.6;%Amount that examples overlap with each other(0->1)
-for i=1:length(folders) %Loop through folders
+folders = dir2(strcat(path,'\*')); %extract folder folder info 
+
+data = {}; % All data
+labels = {}; % All labels
+Time_limit = 3.64; % Dwell time
+nfft = 128; % Number of frequancy points length
+OL = 60; % Overlap of bins
+win_len = 80; % Window function length
+win = hamming(win_len); % Hamming window
+val_perc = 10; % Validation data percentage
+test_perc = 10; % Test data percentage
+count = 0; % Number of examples skipped
+countclass = {}; % classes of the examples skipped
+Example_overlap = 0.6; % Amount that examples overlap with each other(0->1)
+
+for i=1:length(folders) % Loop through folders
     trackdatas = dir2(strcat(path,'\',folders(i).name));
-    if(length(trackdatas)== 1)%Extract trkdata name
-        trackdata = trackdatas(1).name;%No radardata folder
+    if(length(trackdatas)== 1) % Extract trkdata name
+        trackdata = trackdatas(1).name; % No radar data folder
     elseif(length(trackdatas) == 2)
-        trackdata = trackdatas(1).name;%When there is no rjktrkdata
+        trackdata = trackdatas(1).name; % When there is no rjktrkdata
     else
-        trackdata = trackdatas(2).name;%When there is rjktrkdata
+        trackdata = trackdatas(2).name; % When there is rjktrkdata
     end
-    %load(strcat(path,'\',folders(i).name,'\',trackdata)) %Load trkdata struct
+    % load(strcat(path,'\',folders(i).name,'\',trackdata)) %Load trkdata struct
     load(strcat(path,'\',trackdata)) %Load trkdata struct
     for example_number = 1:length(trkdata) %Loop through samples
         fs = trkdata(example_number).PRF;
@@ -105,8 +106,8 @@ end
 % save('test_data.mat', 'test_data', '-v7.3');
 % save('test_labels.mat', 'test_labels', '-v7.3');
 
-save('Data/havs_data.mat', 'data', '-v7.3')
-save('Data/havs_labels.mat', 'labels', '-v7.3')
+save('havs_data.mat', 'data', '-v7.3')
+save('havs_labels.mat', 'labels', '-v7.3')
 
 
 %Determine number of diffrent classes
