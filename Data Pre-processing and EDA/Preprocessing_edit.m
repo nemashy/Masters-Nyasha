@@ -20,13 +20,14 @@ function examplesStruct = generateExamples(spectrogramsStruct, dwellTime, numSli
 
     examplesStruct =  struct('Data', {}, 'Label', {}); % Creating a table to store results
     
-    for posSpectrogram=1:length(spectrogramsStruct)
+    for posSpectrogram=1: length(spectrogramsStruct)
         
         spectrogramLabel = spectrogramsStruct(posSpectrogram).Label;
         spectrogramdB = spectrogramsStruct(posSpectrogram).Data;
         spectrogramDuration = spectrogramsStruct(posSpectrogram).DurationSeconds;
         if(spectrogramDuration > dwellTime) % Check if example duration is greater than dwell time
-            spectrogramSlices = getSlices(spectrogramdB, numSlicesPerSpectrogram, dwellTime, spectrogramDuration);
+            %spectrogramSlices = getSlices(spectrogramdB, numSlicesPerSpectrogram, dwellTime, spectrogramDuration);
+            spectrogramSlices = getOverlappingSlices(spectrogramdB, 0.5, dwellTime, spectrogramDuration);
             % Add slices to the examples stucture
             for iSlice=1:length(spectrogramSlices)
                 examplesStruct(end+1).Data = spectrogramSlices(iSlice).Data;
@@ -48,6 +49,23 @@ function spectrogramSlices = getSlices(spectrogramdB, numSlices, dwellTime, dura
        spectrogramSlices(sliceNo).Data = spectrogramdB(:,startColumn:stopColumn);
     end
 
+end
+
+function spectrogramSlices = getOverlappingSlices(spectrogramdB, exampleOverlapPercentage, dwellTime, durationSeconds)
+    [nrows, ncols] = size(spectrogramdB);
+    
+    numOfFramesInDwellTime = fix(dwellTime*ncols/durationSeconds);
+    
+    numOfOverlappingPoints = fix(exampleOverlapPercentage * numOfFramesInDwellTime);
+    spectrogramSlices =  struct('Data', {});
+    startCol = 1;
+    for sliceNo=1:ncols
+       stopCol = startCol + numOfFramesInDwellTime -1;
+       if(stopCol < ncols) % Check if there are available points
+           spectrogramSlices(sliceNo).Data = spectrogramdB(:,startCol:stopCol);
+           startCol = stopCol - numOfOverlappingPoints + 1;
+       end
+    end
 end
 
 function numOfFrames = getNumOfFrames(dwellTime, Fs)
