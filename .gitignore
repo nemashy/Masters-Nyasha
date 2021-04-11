@@ -2,3 +2,8 @@ Data/
 Subplot_avg_images.png
 Processed Data/
 Training/runs/
+Data Pre-processing and EDA/havs_data.mat
+Data Pre-processing and EDA/havs_labels.mat
+Data Pre-processing and EDA/f.mat
+Data Pre-processing and EDA/t.mat
+Data Pre-processing and EDA/havsdata.mat
