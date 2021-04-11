@@ -324,7 +324,6 @@ class CAE_4(nn.Module):
         
         return x
 
-
 # CAE 5
 
 class Encoder_5(nn.Module):
