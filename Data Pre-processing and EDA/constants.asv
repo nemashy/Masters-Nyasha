@@ -1,0 +1,7 @@
+% SFTF Parameters
+dwellTime = 3.64;
+fftLength = 25;
+overlapFraction = 0.75;
+windowLength = 128;
+window = hamming(windowLength);
+numSlicesPerSpectrogram = 4;

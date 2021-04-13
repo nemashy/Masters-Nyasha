@@ -1,4 +1,4 @@
-clear
+clear;
 path = 'C:\Users\nyasha\Desktop\Thesis\Radar-Classfication-Project-master\Data';%location of radar data
 folders = dir2(strcat(path,'\*')); %extract folder folder info 
 
