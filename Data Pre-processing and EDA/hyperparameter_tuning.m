@@ -1,8 +1,12 @@
 hyperparameters;
 radarDataPath = 'C:\Users\nyasha\Desktop\Thesis\Radar-Classfication-Project-master\Data\';
+results = getSNRValues(fftLengths, windowLengths, overlapFractions, radarDataPath, Hd);
+% Filter
+d = fdesign.notch('N,F0,BW,Ap',6,0,0.045,0.5);
+Hd = design(d);
 
-function SNRValues = getSNRValues(fftLengths, windowLengths, overlapFractions, radarDataPath)
-    bestAvgSNR = 0;
+function results = getSNRValues(fftLengths, windowLengths, overlapFractions, radarDataPath, Hd)
+
     maxCombinations = length(fftLengths)*length(windowLengths)*length(overlapFractions);
     combinationNo = 1;
     trackDataFiles = dir(fullfile(radarDataPath,'*.mat'));
@@ -11,41 +15,37 @@ function SNRValues = getSNRValues(fftLengths, windowLengths, overlapFractions, r
         for windowLength = windowLengths
             if(windowLength <= fftLength)
                 for overlapFraction = overlapFractions
-                    for iFile = 1:length(trackDataFiles)
+                    sumFileAvgSNR = 0;
+                    for iFile = 55:55 %length(trackDataFiles)
                         trackDataFileName = trackDataFiles(iFile).name;
                         trkdataStruct = loadTrkdata(trackDataFileName, radarDataPath);
                         trkdata = trkdataStruct.trkdata;
-                        spectrograms = convertIQSamplesToSpectrograms(trkdata, windowLength, overlapFraction, fftLength);
-                        avgSNR = getAvgSNR(spectrograms);
-
-
-                        if(avgSNR > bestAvgSNR)
-                            bestResult = [avgSNR fftLength windowLength overlapFraction];
-                        end
+                        spectrograms = convertIQSamplesToSpectrograms(trkdata, windowLength, overlapFraction, fftLength, Hd);
+                        fileAvgSNR = getAvgSNR(spectrograms);
+                        sumFileAvgSNR = sumFileAvgSNR + fileAvgSNR;
+                        filesAvgSNR = sumFileAvgSNR %/iFile;
                     end
-
+                    results(combinationNo).AverageSNR = filesAvgSNR;
+                    results(combinationNo).FFTLength = fftLength;
+                    results(combinationNo).WindowLength = windowLength;
+                    results(combinationNo).OverlapFraction = overlapFraction;
+                    disp('Finished iteration number ' + string(combinationNo))
+                    combinationNo = combinationNo + 1;
                 end
-                results(combinationNo).AverageSNR = bestResult(1);
-                results(combinationNo).FFTLength = bestResult(2);
-                results(combinationNo).WindowLength = bestResult(3);
-                results(combinationNo).OverlapFraction = bestResult(4);
-                
-                SNRValues = results;
-                disp('Finished iteration number ' + string(combinationNo))
-                combinationNo = combinationNo + 1;
             end
         end
     end
 end
 
-
 % Finds the average SNR of spectrograms in each trkdata file
 function avgSNR = getAvgSNR(spectrograms)
     sumSNR = 0;
+    noiseMeanSNR = mean(spectrograms(1).Data, 'all');
+    
     for posExample = 1:length(spectrograms)
         maxLeveldB = max(spectrograms(posExample).Data, [], 'all');
-        minLeveldB = min(spectrograms(posExample).Data, [], 'all');
-        sumSNR = sumSNR + maxLeveldB - minLeveldB;
+        sumSNR = sumSNR + maxLeveldB - noiseMeanSNR;
         avgSNR = sumSNR/posExample;
     end
+    disp(avgSNR);
 end
