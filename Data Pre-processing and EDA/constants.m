@@ -1,5 +1,5 @@
 % SFTF Parameters
-dwellTime = 2.9;
+dwellTime = 4;
 fftLength = 128;
 overlapFraction = 0.5;
 windowLength = 128;

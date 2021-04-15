@@ -60,7 +60,7 @@ def train_model(num_epochs, train_loader, val_loader, criterion, optimizer, devi
         correct = 0
         total = 0
         accuracy = 0
-        
+
         for batch_idx, (images, labels) in enumerate(train_loader):
             images = images.to(device, dtype=torch.float)
             labels = labels.to(device)
