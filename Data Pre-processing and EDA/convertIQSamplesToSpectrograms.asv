@@ -2,7 +2,7 @@
 function spectrogramsStruct = convertIQSamplesToSpectrograms(trkdata, windowLength, overlapFraction, fftLength, filterParams)
     if isa(trkdata, 'struct') % Check if the datatype is a 'struct'
             spectrogramsStruct = struct('Data',cell(length(trkdata), 1), 'Label', cell(length(trkdata), 1), 'DurationSeconds', cell(length(trkdata), 1));
-            for posRangeBin = 1:length(trkdata) % posRangeBin = 16
+            for %1:length(trkdata) % 
                 fsHz = trkdata(posRangeBin).PRF;
                 [IQ_Sample, Sample_Label] = getIQSample(posRangeBin, filterParams, trkdata);
                 % save('nyasha_signal.mat','IQ_Sample', 'Sample_Label');

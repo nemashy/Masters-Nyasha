@@ -1,9 +1,10 @@
 hyperparameters;
 radarDataPath = 'C:\Users\nyasha\Desktop\Thesis\Radar-Classfication-Project-master\Data\';
-results = getSNRValues(fftLengths, windowLengths, overlapFractions, radarDataPath, Hd);
 % Filter
 d = fdesign.notch('N,F0,BW,Ap',6,0,0.045,0.5);
 Hd = design(d);
+results = getSNRValues(fftLengths, windowLengths, overlapFractions, radarDataPath, Hd);
+
 
 function results = getSNRValues(fftLengths, windowLengths, overlapFractions, radarDataPath, Hd)
 
@@ -22,10 +23,10 @@ function results = getSNRValues(fftLengths, windowLengths, overlapFractions, rad
                         trkdata = trkdataStruct.trkdata;
                         spectrograms = convertIQSamplesToSpectrograms(trkdata, windowLength, overlapFraction, fftLength, Hd);
                         fileAvgSNR = getAvgSNR(spectrograms);
-                        sumFileAvgSNR = sumFileAvgSNR + fileAvgSNR;
-                        filesAvgSNR = sumFileAvgSNR %/iFile;
+                        %sumFileAvgSNR = sumFileAvgSNR + fileAvgSNR;
+                        %filesAvgSNR = sumFileAvgSNR %/iFile;
                     end
-                    results(combinationNo).AverageSNR = filesAvgSNR;
+                    results(combinationNo).AverageSNR = fileAvgSNR;
                     results(combinationNo).FFTLength = fftLength;
                     results(combinationNo).WindowLength = windowLength;
                     results(combinationNo).OverlapFraction = overlapFraction;
@@ -40,9 +41,10 @@ end
 % Finds the average SNR of spectrograms in each trkdata file
 function avgSNR = getAvgSNR(spectrograms)
     sumSNR = 0;
-    noiseMeanSNR = mean(spectrograms(1).Data, 'all');
+    col = spectrograms(1).Data(:);
+    noiseMeanSNR = var(col); % Looking at a noise spectrogram
     
-    for posExample = 1:length(spectrograms)
+    for posExample = 2:length(spectrograms)
         maxLeveldB = max(spectrograms(posExample).Data, [], 'all');
         sumSNR = sumSNR + maxLeveldB - noiseMeanSNR;
         avgSNR = sumSNR/posExample;

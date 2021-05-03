@@ -8,7 +8,6 @@ radarDataFolderPath = 'C:\Users\nyasha\Desktop\Thesis\Radar-Classfication-Projec
 d = fdesign.notch('N,F0,BW,Ap',6,0,0.045,0.5);
 Hd = design(d);
 
-
 HAVSDatasetStruct =  struct('Data', {}, 'Label', {});    
 trackDataFiles = dir(fullfile(radarDataFolderPath,'*.mat'));
 for iFile = 1:length(trackDataFiles)

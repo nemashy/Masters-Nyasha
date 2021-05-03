@@ -1,0 +1,10 @@
+N = 128
+FrequencyAxis_Hz = (-N/2:1:(N/2-1))*fs/N;
+
+% -----------------------------------------------------------------------------------
+% Plot signal + noise in the frequency domain 
+FFT_SignalPlus_Noise_dB = 20*log10(abs(fftshift(FFT_SignalPlusNoise)));
+
+figure; plot(FrequencyAxis_Hz, FFT_SignalPlus_Noise_dB);
+xlabel('Frequency (Hz)');
+grid on;

@@ -2,6 +2,10 @@ import torch
 from sklearn.utils import class_weight
 import numpy as np
 import matplotlib.pyplot as plt
+import time
+from DatasetCreator import HAVSDataset
+import torchvision.transforms as transforms
+from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 
 def get_device():
@@ -49,6 +53,7 @@ def train_cae(num_epochs, train_loader, criterion, optimizer, device, model_on_d
             )
 
 def train_model(num_epochs, train_loader, val_loader, criterion, optimizer, device, model_on_device):
+    start = time.time()
     optimizer_name, optimizer_params_dict = get_info(optimizer)
     writer = SummaryWriter(comment=f"_model_{model_on_device._get_name()}_criterion_{criterion._get_name()}_optimizer_{optimizer_name}")
     num_batches = len(train_loader)
@@ -90,9 +95,11 @@ def train_model(num_epochs, train_loader, val_loader, criterion, optimizer, devi
         
         print('Epoch: {}/{} \t Training Loss: {:.4f}, Accuracy: {:.2f}, Testing Loss: {:.4f}, Accuracy: {:.2f}'.format(epoch, num_epochs, train_loss, accuracy, test_loss, test_accuracy))
     ## Please revisit this error in names -> test/val
-
+    stop = time.time()
+    duration_s = stop - start
     writer.add_text('optimzer_parameters', str(optimizer_params_dict))
     writer.add_text('model', str(model_on_device))
+    writer.add_text('Duration_s', str(duration_s))
     writer.close()
 
 def evaluate_model(loader, device, model_on_device, criterion):
@@ -179,3 +186,21 @@ def get_info(optimizer):
     optimizer_params_dict = {key:group[key] for group in (optimizer.param_groups) for key in sorted(group.keys()) if key != 'params'}
 
     return optimizer_name, optimizer_params_dict
+
+def createDataloaders(x_train, y_train, x_val, y_val, x_test, y_test, batch_size):
+    # Define the transforms
+    transform = transforms.Compose(
+        [
+        transforms.ToTensor()
+        ])
+    # Create the datasets
+    train_dataset = HAVSDataset(x_train, y_train, transform=transform)
+    val_dataset = HAVSDataset(x_val, y_val, transform=transform)
+    test_dataset = HAVSDataset(x_test, y_test, transform=transform)
+
+    # Creating the data loaders
+    train_loader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True)
+    val_loader = DataLoader(dataset=val_dataset, batch_size=batch_size, shuffle=False)
+    test_loader = DataLoader(dataset=test_dataset, batch_size=batch_size, shuffle=False)
+
+    return train_loader, val_loader, test_loader

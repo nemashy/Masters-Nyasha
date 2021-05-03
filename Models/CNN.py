@@ -2,31 +2,28 @@
 import torch.nn as nn
 import torch.nn.functional as F
 
-
 class ConvNet1(nn.Module):
     def __init__(self):
-        super(ConvNet1, self).__init__()
-        self.layer1 = nn.Sequential(
-            nn.Conv2d(1, 64, kernel_size=3, stride=1, padding=2),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2))
-        self.layer2 = nn.Sequential(
-            nn.Conv2d(64,64, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2))
-        self.fc1 = nn.Sequential(
-            nn.Linear( ______, 128),
-            nn.ReLU())
-        self.fc2 = nn.Linear(128, 6)
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 32, 3)
+        self.pool = nn.MaxPool2d(2, 2)
+        self.conv2 = nn.Conv2d(32, 32, 3)
+        self.dropout = nn.Dropout(0.2)
+        self.fc1 = nn.Linear(32 * 30 * 9, 128)
+        self.fc2 = nn.Linear(128, 64)
+        self.fc3 = nn.Linear(64, 6)
 
     def forward(self, x):
-        out = self.layer1(x)
-        out = self.layer2(out)
-        out = out.reshape(out.size(0), -1)
-        out = self.drop_out(out)
-        out = self.fc1(out)
-        out = self.fc2(out)
-        return out
+        x = self.pool(F.relu(self.conv1(x)))
+        x = self.pool(F.relu(self.conv2(x)))
+        x = x.view(-1, 32 * 30 * 9)
+        x = self.dropout(x)
+        x = F.relu(self.fc1(x))
+        x = self.dropout(x)
+        x = F.relu(self.fc2(x))
+        x = self.dropout(x)
+        x = self.fc3(x)
+        return x
 
 
 # Convolutional neural network (two convolutional layers)
