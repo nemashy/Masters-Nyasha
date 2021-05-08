@@ -30,8 +30,8 @@ clutter_idxs = find(labels == clutter_int_label);
 two_walking_idxs = find(labels == two_walking_int_label);
 sphere_idxs = find(labels == sphere_int_label);
 
-train_fraction = 0.7;
-validation_fraction = 0.15;
+train_fraction = 0.8;
+validation_fraction = 0.2;
 test_fraction = 0.15;
 
 
@@ -92,7 +92,7 @@ testing_set_idxs = [test_sphere_idxs test_two_walking_idxs test_clutter_idxs tes
 validation_set_idxs = [validation_sphere_idxs validation_two_walking_idxs validation_clutter_idxs validation_vehicle_idxs validation_walking_idxs_2 validation_walking_idxs_1 validation_running_idxs_2 validation_running_idxs_1];
 
 
-MyDatasetStruct =  struct('Data', {}, 'Label', {});  
+TrainDatasetStruct =  struct('Data', {}, 'Label', {});  
 TestDatasetStruct =  struct('Data', {}, 'Label', {});  
 ValidationDatasetStruct =  struct('Data', {}, 'Label', {});  
 
@@ -111,6 +111,7 @@ for idx=validation_set_idxs
     ValidationDatasetStruct(end).Label = HAVSDatasetStruct(idx).Label;
 end
 
-save('train_data', 'TrainDatasetStruct', '-v7.3');
-save('test_data', 'TestDatasetStruct', '-v7.3');
-save('val_data', 'ValidationDatasetStruct', '-v7.3');
+save('train_data_cross_val', 'TrainDatasetStruct', '-v7.3');
+%save('test_data', 'TestDatasetStruct', '-v7.3');
+save('test_data_cross_val', 'ValidationDatasetStruct', '-v7.3');
+

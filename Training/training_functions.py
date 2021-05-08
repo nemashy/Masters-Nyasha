@@ -7,6 +7,7 @@ from DatasetCreator import HAVSDataset
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
+from sklearn.metrics import confusion_matrix
 
 def get_device():
     """Checks the device that cuda is running on"""
@@ -102,13 +103,16 @@ def train_model(num_epochs, train_loader, val_loader, criterion, optimizer, devi
     writer.add_text('Duration_s', str(duration_s))
     writer.close()
 
-def evaluate_model(loader, device, model_on_device, criterion):
+def evaluate_model(loader, device, model_on_device, criterion, *args):
+
     """Evaluate Performance on test set"""
     model_on_device.eval() # Turn off gradient computations
     num_batches = len(loader)
     correct = 0
     total = 0
     running_loss = 0
+    y_tot=torch.empty(0)
+    y_pred_tot=torch.empty(0)
     with torch.no_grad():
         for data in loader:
             images, labels = data
@@ -122,8 +126,42 @@ def evaluate_model(loader, device, model_on_device, criterion):
 
             running_loss += loss.item()
 
-    accuracy = 100 * correct / total       
 
+            labels=labels.cpu()
+            predicted=predicted.cpu()
+
+            y_tot = torch.cat((y_tot, labels), 0)
+            y_pred_tot = torch.cat((y_pred_tot, predicted), 0)
+
+    accuracy = 100 * correct / total       
+    errors = (predicted -  != 0)
+    # Plotting the Confusion Matrix
+    assert len(args)==2 or len(args)==0, 'Please insert both dataset and dataset name'
+    if args:
+        cm = confusion_matrix(y_tot.numpy(), y_pred_tot.numpy())
+        np.set_printoptions(precision=4)
+
+        # Coloured confusion matrix
+        plt.figure(figsize = (12,12))
+        cm = confusion_matrix(y_tot.numpy(), y_pred_tot.numpy(), normalize="true")
+        plt.imshow(cm, cmap=plt.cm.Blues)
+
+        for (i, j), z in np.ndenumerate(cm):
+            plt.text(j, i, '{:0.3f}'.format(z), ha='center', va='center')
+        
+        plt.xticks(range(6))
+        plt.yticks(range(6))
+        plt.xlabel("Prediction")
+        plt.ylabel("True")
+
+        # We can retrieve the categories used by the LabelEncoder
+        classes = args[0].enc.classes_.tolist()
+        plt.gca().set_xticklabels(classes)
+        plt.gca().set_yticklabels(classes)
+
+        plt.title("Normalized Confusion Matrix For "+ args[1] + " Data")
+        plt.colorbar()
+        plt.show()
     return running_loss / num_batches, accuracy 
 
 
