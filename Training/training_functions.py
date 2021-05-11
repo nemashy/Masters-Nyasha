@@ -3,9 +3,11 @@ from sklearn.utils import class_weight
 import numpy as np
 import matplotlib.pyplot as plt
 import time
+import random
 from DatasetCreator import HAVSDataset
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
+from pytorchtools import EarlyStopping
 from torch.utils.tensorboard import SummaryWriter
 from sklearn.metrics import confusion_matrix
 
@@ -53,11 +55,30 @@ def train_cae(num_epochs, train_loader, criterion, optimizer, device, model_on_d
             )
             )
 
+def display_random_errors(img_errors, pred_errors, obs_errors, dataset):
+    """ This function shows 6 images with their predicted and real labels"""
+    n = 0
+    nrows = 2
+    ncols = 5
+    errors_index = random.sample(range(0, len(img_errors)), nrows*ncols)
+    classes = dataset.enc.classes_.tolist()
+    fig, ax = plt.subplots(nrows,ncols,sharex=True,sharey=True, figsize=(14,10))
+    for row in range(nrows):
+        for col in range(ncols):
+            error = errors_index[n]
+            ax[row,col].imshow((img_errors[error]).reshape((128,44)))
+            ax[row,col].set_title("Predicted label :{}\nTrue label :{}".format( classes[int(pred_errors[error])], classes[int(obs_errors[error])]  ))
+            n += 1
+
 def train_model(num_epochs, train_loader, val_loader, criterion, optimizer, device, model_on_device):
     start = time.time()
     optimizer_name, optimizer_params_dict = get_info(optimizer)
     writer = SummaryWriter(comment=f"_model_{model_on_device._get_name()}_criterion_{criterion._get_name()}_optimizer_{optimizer_name}")
+    
     num_batches = len(train_loader)
+
+    # initialize the early_stopping object
+    early_stopping = EarlyStopping(patience=20, verbose=True)
     for epoch in range(1, num_epochs+1):
         model_on_device.train() # Turn on Dropout, BatchNorm etc
         train_loss_per_batch = np.empty(num_batches)
@@ -95,6 +116,12 @@ def train_model(num_epochs, train_loader, val_loader, criterion, optimizer, devi
         writer.add_scalar('Accuracy/Validation', test_accuracy, epoch)
         
         print('Epoch: {}/{} \t Training Loss: {:.4f}, Accuracy: {:.2f}, Testing Loss: {:.4f}, Accuracy: {:.2f}'.format(epoch, num_epochs, train_loss, accuracy, test_loss, test_accuracy))
+
+        early_stopping(test_loss, model_on_device)
+        if early_stopping.early_stop:
+            print("Early stopping")
+            break    
+    
     ## Please revisit this error in names -> test/val
     stop = time.time()
     duration_s = stop - start
@@ -134,7 +161,10 @@ def evaluate_model(loader, device, model_on_device, criterion, *args):
             y_pred_tot = torch.cat((y_pred_tot, predicted), 0)
 
     accuracy = 100 * correct / total       
-    errors = (predicted -  != 0)
+    accuracy = 100 * correct / total       
+    errors = (y_pred_tot - y_tot  != 0)
+    y_pred_errors = y_pred_tot[errors]
+    y_true_errors = y_tot[errors]
     # Plotting the Confusion Matrix
     assert len(args)==2 or len(args)==0, 'Please insert both dataset and dataset name'
     if args:
@@ -162,7 +192,7 @@ def evaluate_model(loader, device, model_on_device, criterion, *args):
         plt.title("Normalized Confusion Matrix For "+ args[1] + " Data")
         plt.colorbar()
         plt.show()
-    return running_loss / num_batches, accuracy 
+    return running_loss / num_batches, accuracy, errors, y_pred_errors, y_true_errors 
 
 
 def get_class_weights(y_train, device):

@@ -9,8 +9,8 @@ function spectrogramsStruct = convertIQSamplesToSpectrograms(trkdata, windowLeng
                 window = hamming(windowLength);
                 overlapLength = overlapFraction * windowLength;
                 % Get STFT of the example
-                [S_dB, F, T] = stft(IQ_Sample,fsHz,'Window',window,'OverlapLength',overlapLength,'FFTLength',fftLength);
-                %S_dB = 20*log10(abs(S));
+                [S, F, T] = stft(IQ_Sample,fsHz,'Window',window,'OverlapLength',overlapLength,'FFTLength',fftLength);
+                S_dB = 20*log10(abs(S));
                 spectrogramsStruct(posRangeBin).Data = S_dB;
                 spectrogramsStruct(posRangeBin).Label = Sample_Label;
                 spectrogramsStruct(posRangeBin).DurationSeconds = T(end);
