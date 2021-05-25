@@ -61,9 +61,9 @@ end
 function spectrogramSlices = getOverlappingSlices(spectrogramdB, exampleOverlapFraction, dwellTime, durationSeconds)
     [nrows, ncols] = size(spectrogramdB);
     
-    numOfFramesInDwellTime = fix(dwellTime*ncols/durationSeconds);
-    
+    numOfFramesInDwellTime = round(dwellTime*ncols/durationSeconds);
     numOfOverlappingPoints = fix(exampleOverlapFraction * numOfFramesInDwellTime);
+
     spectrogramSlices =  struct('Data', {});
     startCol = 1;
     for sliceNo=1:ncols

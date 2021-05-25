@@ -108,7 +108,8 @@ def train_model(num_epochs, train_loader, val_loader, criterion, optimizer, devi
         avg_epoch_train_loss = np.mean(train_loss_per_batch)
         avg_epoch_accuracy = np.mean(accuracy_per_batch)
 
-        test_loss, test_accuracy = evaluate_model(val_loader, device, model_on_device, criterion)
+        
+        test_loss, test_accuracy , _, _, _ = evaluate_model(val_loader, device, model_on_device, criterion)
 
         writer.add_scalar('Loss/Train', avg_epoch_train_loss, epoch)
         writer.add_scalar('Accuracy/Train', avg_epoch_accuracy, epoch)
@@ -117,17 +118,23 @@ def train_model(num_epochs, train_loader, val_loader, criterion, optimizer, devi
         
         print('Epoch: {}/{} \t Training Loss: {:.4f}, Accuracy: {:.2f}, Testing Loss: {:.4f}, Accuracy: {:.2f}'.format(epoch, num_epochs, train_loss, accuracy, test_loss, test_accuracy))
 
+        
         early_stopping(test_loss, model_on_device)
         if early_stopping.early_stop:
             print("Early stopping")
             break    
-    
+       
     ## Please revisit this error in names -> test/val
     stop = time.time()
     duration_s = stop - start
     writer.add_text('optimzer_parameters', str(optimizer_params_dict))
     writer.add_text('model', str(model_on_device))
     writer.add_text('Duration_s', str(duration_s))
+
+    dummy_data =  torch.randn(256, 1, 128 ,45)
+    dummy_data = dummy_data.to(device, dtype=torch.float)
+    writer.add_graph(model=model_on_device, input_to_model=dummy_data)
+
     writer.close()
 
 def evaluate_model(loader, device, model_on_device, criterion, *args):

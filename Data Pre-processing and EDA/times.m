@@ -15,5 +15,5 @@ end
 
 
 unique_timesatmps_array = unique(time_stamps_array);
-
+unique_timesatmps_array = unique_timesatmps_array(:);
 % All the examples were taken within 74 unique timestamps
