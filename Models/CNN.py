@@ -95,5 +95,60 @@ class ConvNet3(nn.Module):
         out = out.reshape(out.size(0), -1)
         out = self.drop_out(out)
         out = self.fc1(out)
-        out = self.fc2(out)
+        out = self.fc
+        2(out)
         return out
+
+# Batch Norm Model !!!!!!!!!! Correcto
+class ConvNet5(nn.Module):
+    def __init__(self):
+        super().__init__()
+
+        # Block 1
+        self.conv1 = nn.Conv2d(1, 16, 3)
+        self.bn1 = nn.BatchNorm2d(16, momentum=0.9)
+        self.pool = nn.MaxPool2d(2, 2)
+
+        # Block 2
+        self.conv2 = nn.Conv2d(16, 32, 3)
+        self.bn2 = nn.BatchNorm2d(32, momentum=0.9)
+
+        # Block 3
+        self.conv3 = nn.Conv2d(32, 64, 3)
+        self.bn3 = nn.BatchNorm2d(64, momentum=0.9)
+
+        self.dropout = nn.Dropout(0.5)
+
+        self.avgpool = nn.AdaptiveAvgPool2d((1,1))
+
+        # Dense layer 1
+        self.fc1 = nn.Linear(64 * 1 * 1, 6)
+        #self.bn3 = nn.BatchNorm1d(128)
+
+        # Dense layer 2
+        # self.fc2 = nn.Linear(128, 64)
+        # self.bn4 = nn.BatchNorm1d(64)
+        # self.fc3 = nn.Linear(64, 6)
+
+    def forward(self, x):
+        x = self.pool(F.relu(self.bn1(self.conv1(x))))
+        x = self.pool(F.relu(self.bn2(self.conv2(x))))
+        x = self.pool(F.relu(self.bn3(self.conv3(x))))
+
+        # Global average pool
+        x = self.avgpool(x)
+
+        x = x.view(-1, 64 * 1 * 1)
+
+        #x = self.avgpool(x)
+
+        x = self.fc1(x)
+
+
+        # x = self.dropout(x)
+        # x = F.relu(self.bn3(self.fc1(x)))
+        # # x = self.dropout(x)
+        # x = F.relu(self.bn4(self.fc2(x)))
+        # # x = self.dropout(x)
+        # x = self.fc3(x)
+        return x
