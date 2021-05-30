@@ -274,7 +274,7 @@ def createDataloaders(x_train, y_train, x_val, y_val, x_test, y_test, batch_size
     test_dataset = HAVSDataset(x_test, y_test, transform=transform)
 
     # Creating the data loaders
-    train_loader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True)
+    train_loader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=False)
     val_loader = DataLoader(dataset=val_dataset, batch_size=batch_size, shuffle=False)
     test_loader = DataLoader(dataset=test_dataset, batch_size=batch_size, shuffle=False)
 
