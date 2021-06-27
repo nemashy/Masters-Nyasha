@@ -54,3 +54,42 @@ Random  Data/Test Results.PNG
 Random  Data/Validation Results.PNG
 Training/nyasha.pth
 Training/history.py
+Training/model-fold-0_2.pth
+Training/model-fold-0_3.pth
+Training/model-fold-1_2.pth
+Training/model-fold-1_3.pth
+Training/model-fold-2_2.pth
+Training/model-fold-2_3.pth
+Training/model-fold-3_2.pth
+Training/model-fold-3_3.pth
+Training/model-fold-4_2.pth
+Training/model-fold-4_3.pth
+Training/model-fold-5_2.pth
+Training/model-fold-5_3.pth
+Training/model-fold-6_2.pth
+Training/model-fold-6_3.pth
+Training/model-fold-7_2.pth
+Training/model-fold-7_3.pth
+Training/model-fold-8_2.pth
+Training/model-fold-8_3.pth
+Training/model-fold-9_2.pth
+Training/model-fold-9_3.pth
+Images/Capture.PNG
+Images/Fold_0.PNG
+Inference/+-.pt
+Inference/checkpoint.pt
+Inference/ernet_scripted.pt
+Inference/ernet.pth
+Models/__pycache__/CNN.cpython-38.pyc
+Training/best model residual network 3 blocks.pt
+Training/Best Model So Far.pt
+Training/best_resnet.pt
+Training/model_cnn2.onnx
+Training/model_cnn3.onnx
+Training/__pycache__/cross_validation.cpython-38.pyc
+Training/__pycache__/data_analysis.cpython-38.pyc
+Training/__pycache__/model_training.cpython-38.pyc
+Training/__pycache__/DatasetCreator.cpython-38.pyc
+Training/__pycache__/training_functions.cpython-38.pyc
+Training/__pycache__/training_functions.cpython-38.pyc
+Training/__pycache__/DatasetCreator.cpython-38.pyc

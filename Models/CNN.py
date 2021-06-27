@@ -100,8 +100,7 @@ class ConvNet3(nn.Module):
         out = out.reshape(out.size(0), -1)
         out = self.drop_out(out)
         out = self.fc1(out)
-        out = self.fc
-        2(out)
+        out = self.fc2(out)
         return out
 
 # Batch Norm Model !!!!!!!!!! Correcto
@@ -233,6 +232,37 @@ class ErnNet(nn.Module): # Enerst Net
         out = self.fc1(out)
 
         return out
+
+
+
+
+class ErnNet2(nn.Module): # Enerst Net
+    def __init__(self, num_labels=6):
+        super(ErnNet2, self).__init__()
+        # Network = First layer -> block1 -> block2 ....
+        self.first_layer = FirstLayer()
+        self.block1 = Block()
+        self.block2 = Block()
+        self.block3 = Block()
+        self.block4 = Block()
+        self.output_channels = self.block4.num_channels
+    
+        self.avgpool = nn.AdaptiveAvgPool2d((1,1))
+        self.fc1 = nn.Linear(self.output_channels * 1 * 1, num_labels)
+
+    
+    def forward(self, x):
+        out = self.first_layer(x)
+        out = self.block1(out)
+        out = self.block2(out)
+        out = self.block3(out)
+        out = self.block3(out)
+        out = self.avgpool(out)
+        out = out.view(-1, self.output_channels * 1 * 1)
+        out = self.fc1(out)
+
+        return out
+
 
 # ============= Residual Network End =============
 
