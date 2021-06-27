@@ -189,7 +189,7 @@ class ModelTrainer:
 
         # Plotting the Confusion Matrix
         if show_cm:
-            self.generate_confusion_matrix(y_tot, y_pred_tot)
+            self.generate_confusion_matrix(self.classes, y_tot, y_pred_tot)
 
         return running_loss / num_batches, accuracy, errors, y_pred_errors, y_true_errors
 
