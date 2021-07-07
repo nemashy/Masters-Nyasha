@@ -267,18 +267,10 @@ def visualise_cae_performance(
     plt.show()
 
 
-def get_train_test_data(compressed_file_path):
+def decompress_data(compressed_file_path):
     # Extracting data from the compressed file
-
-    processed_data = np.load(compressed_file_path)  # Unzipping
-    x_train = processed_data["x_train"]
-    x_test = processed_data["x_test"]
-    x_val = processed_data["x_val"]
-    y_train = processed_data["y_train"]
-    y_test = processed_data["y_test"]
-    y_val = processed_data["y_val"]
-
-    return (x_train, x_test, x_val, y_train, y_test, y_val)
+    decompressed_data = np.load(compressed_file_path)  # Unzipping
+    return decompressed_data
 
 
 def get_info(optimizer):
