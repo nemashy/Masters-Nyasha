@@ -5,6 +5,7 @@ import argparse
 from torch2trt import torch2trt
 
 from CNN import ErnNet
+from utility_functions import get_pytorch_model
 
 class ModelPerformance:
     """The ModelPerformance class create an object that can be used
@@ -98,14 +99,6 @@ class PerfComparison(ModelPerformance):
             self.get_throughput_boost(
                 throughput_unoptim_model_imgs_per_sec, model_throughput_imgs_per_sec
             )
-
-
-def get_pytorch_model(state_dict_path, model_type):
-    """Get pytorch model"""
-    checkpoint = torch.load(state_dict_path)
-    model_type.load_state_dict(checkpoint)
-    return model_type
-
 
 
 def parse_opt():
