@@ -6,11 +6,25 @@ import matplotlib.pyplot as plt
 import time
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
-from training_functions import get_device
 from pytorchtools import EarlyStopping
 from torch.utils.tensorboard import SummaryWriter
 from sklearn.metrics import confusion_matrix
 from torch.optim.lr_scheduler import MultiStepLR
+
+def get_device():
+    """Checks the device that cuda is running on"""
+
+    if torch.cuda.is_available():
+        device = torch.device(
+            "cuda:0"
+        )  # you can continue going on here, like cuda:1 cuda:2....etc.
+        print("Running on the GPU")
+
+    else:
+        device = torch.device("cpu")
+        print("Running on the CPU")
+
+    return device
 
 class Scheduler:
     def __init__(self, optimizer, transition_steps, gamma_value):
@@ -60,23 +74,23 @@ class HAVSDataset(Dataset): # Human Activity, Vehicle and Sphere (HAVS)
         return len(self.data)
 
 class ModelTrainer:
-    def __init__(self, model, device, criterion, train_loader, val_loader, classes, scheduler=None):
+    def __init__(self, model, criterion, data_loaders_and_classes):
         self.model = model
-        self.device = device
-        self.model_on_device = model.to(device)
-        self.scheduler = scheduler
-        self.train_loader = train_loader
-        self.val_loader = val_loader
+        self.device = get_device()
+        self.model_on_device = model.to(self.device)
+
+        self.train_loader = data_loaders_and_classes['train_loader']
+        self.val_loader = data_loaders_and_classes['val_loader']
+        self.classes = data_loaders_and_classes['classes']
         self.criterion = criterion
-        self.classes = classes
+        
+        self.compressed_model = None
+        self.scheduler = None
 
     def train_model(self, num_epochs, optimizer):
-
-        optimizer_name, optimizer_params_dict = get_info(optimizer)
-        writer = SummaryWriter(
-            comment=f"_model_{self.model_on_device._get_name()}_optimizer_{optimizer_name}"
-        )
-
+        
+        writer = SummaryWriter()
+        _, optimizer_params_dict = get_info(optimizer)
         num_batches = len(self.train_loader)
         early_stopping = EarlyStopping(patience=20, verbose=True)
 
@@ -220,13 +234,13 @@ class ModelTrainer:
         plt.show()
 
 
-def get_data_loaders(x_train, y_train, x_val, y_val, x_test, y_test, batch_size):
+def get_loaders_and_classes(data, batch_size) -> dict:
     # Define the transforms
     transform = transforms.Compose([transforms.ToTensor()])
     # Create the datasets
-    train_dataset = HAVSDataset(x_train, y_train, transform=transform)
-    val_dataset = HAVSDataset(x_val, y_val, transform=transform)
-    test_dataset = HAVSDataset(x_test, y_test, transform=transform)
+    train_dataset = HAVSDataset(data['x_train'], data['y_train'], transform=transform)
+    val_dataset = HAVSDataset(data['x_val'], data['y_val'], transform=transform)
+    test_dataset = HAVSDataset(data['x_test'], data['y_test'], transform=transform)
     classes = train_dataset.enc.classes_.tolist()
 
     train_idxs = np.arange(0, len(train_dataset))
@@ -244,7 +258,7 @@ def get_data_loaders(x_train, y_train, x_val, y_val, x_test, y_test, batch_size)
     )
     test_loader = DataLoader(dataset=test_dataset, batch_size=batch_size)
 
-    return train_loader, val_loader, test_loader, classes
+    return {'train_loader':train_loader, 'val_loader':val_loader, 'test_loader':test_loader, 'classes':classes}
 
 
 def write_to_tensorboard(writer, avg_epoch_train_loss, avg_epoch_accuracy, val_loss, val_accuracy, epoch):

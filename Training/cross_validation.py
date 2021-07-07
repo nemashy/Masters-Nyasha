@@ -36,7 +36,7 @@ class TrainTestData:
         ])
         return HAVSDataset(self.x_data, self.y_data, transform=transform)
 
-class CrossValidate():
+class CrossValidation():
     def __init__(self, network, train_data, test_data, device, criterion, num_folds):
         self.train_data = train_data
         self.test_data = test_data
