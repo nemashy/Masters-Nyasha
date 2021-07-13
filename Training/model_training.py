@@ -10,6 +10,7 @@ from pytorchtools import EarlyStopping
 from torch.utils.tensorboard import SummaryWriter
 from sklearn.metrics import confusion_matrix
 from torch.optim.lr_scheduler import MultiStepLR
+from sklearn.utils import class_weight
 
 def get_device():
     """Checks the device that cuda is running on"""
@@ -233,6 +234,18 @@ class ModelTrainer:
         plt.colorbar()
         plt.show()
 
+def get_train_test_data(compressed_file_path):
+    # Extracting data from the compressed file
+
+    processed_data = np.load(compressed_file_path)  # Unzipping
+    x_train = processed_data["x_train"]
+    x_test = processed_data["x_test"]
+    x_val = processed_data["x_val"]
+    y_train = processed_data["y_train"]
+    y_test = processed_data["y_test"]
+    y_val = processed_data["y_val"]
+
+    return (x_train, x_test, x_val, y_train, y_test, y_val)
 
 def get_loaders_and_classes(data, batch_size) -> dict:
     # Define the transforms
@@ -259,6 +272,16 @@ def get_loaders_and_classes(data, batch_size) -> dict:
     test_loader = DataLoader(dataset=test_dataset, batch_size=batch_size)
 
     return {'train_loader':train_loader, 'val_loader':val_loader, 'test_loader':test_loader, 'classes':classes}
+
+
+def get_class_weights(y_train, device):
+    """Get the class weight to manage data imbalance"""
+    class_weights = class_weight.compute_class_weight(
+        "balanced", np.unique(y_train), y_train
+    )
+    class_weights = torch.from_numpy(class_weights).float().to(device)
+
+    return class_weights
 
 
 def write_to_tensorboard(writer, avg_epoch_train_loss, avg_epoch_accuracy, val_loss, val_accuracy, epoch):
