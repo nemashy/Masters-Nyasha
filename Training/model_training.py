@@ -140,7 +140,7 @@ class ModelTrainer:
 
             print(
                 "Epoch: {}/{} \t Training Loss: {:.4f}, Accuracy: {:.2f}, Testing Loss: {:.4f}, Accuracy: {:.2f}".format(
-                    epoch, num_epochs, train_loss, accuracy, val_loss, val_accuracy
+                    epoch, num_epochs, avg_epoch_train_loss, avg_epoch_accuracy, val_loss, val_accuracy
                 )
             )
 

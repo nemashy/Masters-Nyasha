@@ -38,7 +38,6 @@ Training/model-fold-3.pth
 Training/model-fold-4.pth
 Data Pre-processing and EDA/train_data_cross_val.mat
 Data Pre-processing and EDA/test_data_cross_val.mat
-Training/checkpoint.pt
 Training/model-fold-5.pth
 Training/model-fold-6.pth
 Training/model-fold-7.pth
