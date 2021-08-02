@@ -1,4 +1,5 @@
 # Convlutional Neural Network
+from torch.quantization import QuantStub, DeQuantStub
 import torch.nn as nn
 import torch.nn.functional as F
 
@@ -169,6 +170,7 @@ class FirstLayer(nn.Module):
         self.conv1 = nn.Conv2d(1, num_channels, kernel_size=3, padding=1)
         self.bn1 = nn.BatchNorm2d(num_channels)
         self.pool = nn.MaxPool2d(2, 2)
+        self.relu = F.relu()
 
     def forward(self, x):
 
@@ -324,3 +326,32 @@ class Net(nn.Module):
         return out
 
 # ============= Plain CNN End =============
+
+
+class ErnNetQAT(nn.Module):
+    def __init__(self, num_labels=6):
+        super(ErnNetQAT, self).__init__()
+        # Network = First layer -> block1 -> block2 ....
+        self.quant = QuantStub()
+        self.first_layer = FirstLayer()
+        self.block1 = Block()
+        self.block2 = Block()
+        self.block3 = Block()
+        self.output_channels = self.block3.num_channels
+    
+        self.avgpool = nn.AdaptiveAvgPool2d((1,1))
+        self.fc1 = nn.Linear(self.output_channels * 1 * 1, num_labels)
+        self.dequant = DeQuantStub()
+    
+    def forward(self, x):
+        out = self.quant(x)
+        out = self.first_layer(out)
+        out = self.block1(out)
+        out = self.block2(out)
+        out = self.block3(out)
+        out = self.avgpool(out)
+        out = out.view(-1, self.output_channels * 1 * 1)
+        out = self.fc1(out)
+
+        out = self.dequant(out)
+        return out
