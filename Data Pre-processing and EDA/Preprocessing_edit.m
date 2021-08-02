@@ -1,18 +1,17 @@
 clear;
 
-% Load parameters
+% Load parameters in
 params;
 
-% Filter
-filter_props = fdesign.notch('N,F0,BW,Ap', N, F0, BW, Ap);
-filter_params = design(filter_props);
+% Define storage structure
+HAVSDatasetStruct =  struct('Data', {}, 'Label', {}); 
 
-HAVSDatasetStruct =  struct('Data', {}, 'Label', {});    
-trk_data_files = dir(fullfile(data_dir,'*.mat'));
+% Get file names
+trk_data_files = dir(fullfile(data_dir,'*.mat')); 
 
 tic % start timer
 for iFile = 1:length(trk_data_files)
-    file_name = trk_data_files(iFile).name;
+    file_name = trk_data_files(iFile).name; %file_name = trk_data_files(60).name;
     file_path = strcat(data_dir, file_name);
     trk_data_struct = load(file_path);
     trk_data = trk_data_struct.trkdata;
@@ -22,7 +21,7 @@ for iFile = 1:length(trk_data_files)
 end
 toc % stop_timer
 
-save('havsdata', 'HAVSDatasetStruct', '-v7.3');
+save('Data\havsdata.mat', 'HAVSDatasetStruct', '-v7.3');
 
 %imagesc(HAVSDatasetStruct(12).Data);colorbar;
 

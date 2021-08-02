@@ -12,11 +12,14 @@ window = hamming(window_length);
 slices_per_spec = 4; 
 example_overlap_fraction = 0.25;
 
-% Filter params
+% Filter design
 N = 6; % Filter order
 F0 = 0; % Centre frequency
 BW = 0.045; % Bandwidth
 Ap = 0.5; % Passband ripple
+
+filter_props = fdesign.notch('N,F0,BW,Ap', N, F0, BW, Ap);
+filter_params = design(filter_props);
 
 % Parameters tuning
 fftLengths = [64 128 256];
