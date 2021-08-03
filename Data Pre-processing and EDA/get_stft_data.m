@@ -13,8 +13,7 @@ function spectograms_struct = generate_spectrograms(trkdata, window_length, over
             overlap_length = overlap_fraction * window_length;
             % Get STFT of the example
             [S, ~, T] = stft(IQ_samples,fs_Hz,'Window',window,'OverlapLength',overlap_length,'FFTLength',fftLength);
-            S_dB = 20*log10(abs(S));
-            spectograms_struct(range_bin_pos).Data = S_dB;
+            spectograms_struct(range_bin_pos).Data = S;
             spectograms_struct(range_bin_pos).Label = label;
             spectograms_struct(range_bin_pos).DurationSeconds = T(end);
         end

@@ -4,26 +4,24 @@ clear;
 params;
 
 % Define storage structure
-HAVSDatasetStruct =  struct('Data', {}, 'Label', {}); 
+processed_data_struct =  struct('Data', {}, 'Label', {}); 
 
 % Get file names
-trk_data_files = dir(fullfile(data_dir,'*.mat')); 
+trk_data_struct_files = dir(fullfile(data_dir,'*.mat')); 
 
 tic % start timer
-for iFile = 1:length(trk_data_files)
-    file_name = trk_data_files(iFile).name; %file_name = trk_data_files(60).name;
-    file_path = strcat(data_dir, file_name);
-    trk_data_struct = load(file_path);
-    trk_data = trk_data_struct.trkdata;
-    spectrograms_struct = generate_spectrograms(trk_data, window_length, overlap_fraction, fft_length, filter_params);
-    examples_struct = generate_processed_examples(spectrograms_struct, dwell_time, example_overlap_fraction);
-    HAVSDatasetStruct = [HAVSDatasetStruct, examples_struct];
+for iFile = 1:length(trk_data_struct_files)
+    file_name = trk_data_struct_files(iFile).name; %file_name = trk_data_struct_files(60).name;
+    trk_data_struct = load_trk_data(data_dir, file_name);
+    stft_data_struct = get_stft_data(trk_data_struct, window_length, overlap_fraction, fft_length, filter_params);
+    examples_struct = generate_processed_examples(stft_data_struct, dwell_time, example_overlap_fraction);
+    processed_data_struct = [processed_data_struct, examples_struct];
 end
 toc % stop_timer
 
-save('Data\havsdata.mat', 'HAVSDatasetStruct', '-v7.3');
+save('Data\Processed\havsdata.mat', 'processed_data_struct', '-v7.3');
 
-%imagesc(HAVSDatasetStruct(12).Data);colorbar;
+%imagesc(processed_data_struct(12).Data);colorbar;
 
 
 
