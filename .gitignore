@@ -85,12 +85,7 @@ Training/Best Model So Far.pt
 Training/best_resnet.pt
 Training/model_cnn2.onnx
 Training/model_cnn3.onnx
-Training/__pycache__/cross_validation.cpython-38.pyc
-Training/__pycache__/data_analysis.cpython-38.pyc
-Training/__pycache__/model_training.cpython-38.pyc
-Training/__pycache__/DatasetCreator.cpython-38.pyc
-Training/__pycache__/training_functions.cpython-38.pyc
-Training/__pycache__/training_functions.cpython-38.pyc
-Training/__pycache__/DatasetCreator.cpython-38.pyc
+Training/__pycache__/
+Training/trt_models/
 Data Pre-processing and EDA/
 .vscode/
