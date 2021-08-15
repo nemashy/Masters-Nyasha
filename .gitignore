@@ -1,93 +1,84 @@
 Data/
 Subplot_avg_images.png
 Processed Data/
-Training/runs/
-Data Pre-processing and EDA/havs_data.mat
-Data Pre-processing and EDA/havs_labels.mat
-Data Pre-processing and EDA/f.mat
-Data Pre-processing and EDA/t.mat
-Data Pre-processing and EDA/havsdata.mat
+training/runs/
 Untitled-1.ipynb
 Untitlezd-1.ipynb
 .gitignore
 binary tress.ipynb
 Untitled-d1.ipynb
 Untiwtled-1.ipynb
-Data Pre-processing and EDA/ssss.pdf
-Data Pre-processing and EDA/test_data.mat
-Data Pre-processing and EDA/train_data.mat
-Data Pre-processing and EDA/val_data.mat
 Images/All Windows.jpg
 Images/Blackman.jpg
 Images/Hamming.jpg
 Images/Hanning.jpg
 Images/Kaiser.jpg
 Images/Rectangular Window.jpg
-Training/model_cnn.onnx.png
-Training/model_cnn.onnx
-Training/model_cnn.pth
-Training/model.pth
+training/model_cnn.onnx.png
+training/model_cnn.onnx
+training/model_cnn.pth
+training/model.pth
 Untitlewd-1.ipynb
 Untitled-21.ipynb
 w.ipynb
-Random  Data/PSNR Results.csv
-Training/model-fold-0.pth
-Training/model-fold-1.pth
-Training/model-fold-2.pth
-Training/model-fold-3.pth
-Training/model-fold-4.pth
+random_data/PSNR Results.csv
+training/model-fold-0.pth
+training/model-fold-1.pth
+training/model-fold-2.pth
+training/model-fold-3.pth
+training/model-fold-4.pth
 Data Pre-processing and EDA/train_data_cross_val.mat
 Data Pre-processing and EDA/test_data_cross_val.mat
-Training/model-fold-5.pth
-Training/model-fold-6.pth
-Training/model-fold-7.pth
-Training/model-fold-8.pth
-Training/model-fold-9.pth
+training/model-fold-5.pth
+training/model-fold-6.pth
+training/model-fold-7.pth
+training/model-fold-8.pth
+training/model-fold-9.pth
 Data Pre-processing and EDA/split_data.asv
 Data Pre-processing and EDA/times.asv
-Training/__pycache__/DatasetCreator.cpython-38.pyc
-Training/__pycache__/pytorchtools.cpython-38.pyc
-Training/__pycache__/training_functions.cpython-38.pyc
-Training/__pycache__/DatasetCreator.cpython-38.pyc
-Random  Data/Test Results.PNG
-Random  Data/Validation Results.PNG
-Training/nyasha.pth
-Training/history.py
-Training/model-fold-0_2.pth
-Training/model-fold-0_3.pth
-Training/model-fold-1_2.pth
-Training/model-fold-1_3.pth
-Training/model-fold-2_2.pth
-Training/model-fold-2_3.pth
-Training/model-fold-3_2.pth
-Training/model-fold-3_3.pth
-Training/model-fold-4_2.pth
-Training/model-fold-4_3.pth
-Training/model-fold-5_2.pth
-Training/model-fold-5_3.pth
-Training/model-fold-6_2.pth
-Training/model-fold-6_3.pth
-Training/model-fold-7_2.pth
-Training/model-fold-7_3.pth
-Training/model-fold-8_2.pth
-Training/model-fold-8_3.pth
-Training/model-fold-9_2.pth
-Training/model-fold-9_3.pth
+training/__pycache__/DatasetCreator.cpython-38.pyc
+training/__pycache__/pytorchtools.cpython-38.pyc
+training/__pycache__/training_functions.cpython-38.pyc
+training/__pycache__/DatasetCreator.cpython-38.pyc
+random_data/Test Results.PNG
+random_data/Validation Results.PNG
+training/nyasha.pth
+training/history.py
+training/model-fold-0_2.pth
+training/model-fold-0_3.pth
+training/model-fold-1_2.pth
+training/model-fold-1_3.pth
+training/model-fold-2_2.pth
+training/model-fold-2_3.pth
+training/model-fold-3_2.pth
+training/model-fold-3_3.pth
+training/model-fold-4_2.pth
+training/model-fold-4_3.pth
+training/model-fold-5_2.pth
+training/model-fold-5_3.pth
+training/model-fold-6_2.pth
+training/model-fold-6_3.pth
+training/model-fold-7_2.pth
+training/model-fold-7_3.pth
+training/model-fold-8_2.pth
+training/model-fold-8_3.pth
+training/model-fold-9_2.pth
+training/model-fold-9_3.pth
 Images/Capture.PNG
 Images/Fold_0.PNG
-Inference/+-.pt
-Inference/checkpoint.pt
-Inference/ernet_scripted.pt
-Inference/ernet.pth
-Models/__pycache__/CNN.cpython-38.pyc
-Training/best model residual network 3 blocks.pt
-Training/Best Model So Far.pt
-Training/best_resnet.pt
-Training/model_cnn2.onnx
-Training/model_cnn3.onnx
-Training/__pycache__/
-Training/trt_models/
+inference/+-.pt
+inference/checkpoint.pt
+inference/ernet_scripted.pt
+inference/ernet.pth
+models/__pycache__/CNN.cpython-38.pyc
+training/best model residual network 3 blocks.pt
+training/Best Model So Far.pt
+training/best_resnet.pt
+training/model_cnn2.onnx
+training/model_cnn3.onnx
+training/__pycache__/
+training/trt_models/
 Data Pre-processing and EDA/
 .vscode/
-Training/torch2trt
+training/torch2trt
 
