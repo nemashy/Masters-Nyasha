@@ -90,3 +90,4 @@ Training/trt_models/
 Data Pre-processing and EDA/
 .vscode/
 Training/torch2trt
+Training/torch2trt
