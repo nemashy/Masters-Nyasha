@@ -1,5 +1,3 @@
-import sys
-sys.path.append('../models')
 import numpy as np
 import torch.optim as optim
 from torchvision import models
@@ -11,7 +9,7 @@ import torch.nn.utils.prune as prune
 import torch.nn.functional as F
 from model_training import *
 # from CNN import ErnNetQAT
-from training_functions import *
+from utils import *
 from cross_validation import *
 from utils import get_pytorch_model
 

@@ -8,7 +8,7 @@ import yaml
 from DatasetCreator import HAVSDataset
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader, dataset
-from pytorchtools import EarlyStopping
+from model_training import EarlyStopping
 from torch.utils.tensorboard import SummaryWriter
 from sklearn.metrics import confusion_matrix
 from torch.optim.lr_scheduler import MultiStepLR
