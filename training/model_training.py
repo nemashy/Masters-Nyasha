@@ -1,7 +1,9 @@
 from torch.utils.data import Dataset
 from sklearn.preprocessing import LabelEncoder
 import torch
+import os
 import numpy as np
+from pathlib import Path
 import matplotlib.pyplot as plt
 import time
 import torchvision.transforms as transforms
@@ -93,7 +95,10 @@ class ModelTrainer:
         writer = SummaryWriter()
         _, optimizer_params_dict = get_info(optimizer)
         num_batches = len(self.train_loader)
-        early_stopping = EarlyStopping(patience=20, verbose=True)
+        os.makedirs('model_ckpt', exist_ok=True)
+        model_ckpt_dir = Path('model_ckpt')
+        model_ckpt_path = model_ckpt_dir/'checkpoint.pt'
+        early_stopping = EarlyStopping(patience=20, verbose=True, path=model_ckpt_path)
 
         start = time.time()
         for epoch in range(1, num_epochs + 1):
@@ -300,3 +305,9 @@ def get_info(optimizer):
     }
 
     return optimizer_name, optimizer_params_dict
+
+def main():
+    pass
+
+if __name__ == "__main__":
+    main()

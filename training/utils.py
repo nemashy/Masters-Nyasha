@@ -320,3 +320,9 @@ def read_params(config_path):
 def get_pytorch_model(weights_path, model):
     model.load_state_dict(torch.load(weights_path))
     return model
+
+def main():
+    pass
+
+if __name__ == "__main__":
+    main()
