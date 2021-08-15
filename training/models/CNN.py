@@ -170,7 +170,6 @@ class FirstLayer(nn.Module):
         self.conv1 = nn.Conv2d(1, num_channels, kernel_size=3, padding=1)
         self.bn1 = nn.BatchNorm2d(num_channels)
         self.pool = nn.MaxPool2d(2, 2)
-        self.relu = F.relu()
 
     def forward(self, x):
 
