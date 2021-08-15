@@ -6,7 +6,7 @@ from sklearn.model_selection import StratifiedKFold
 from torch.optim.lr_scheduler import MultiStepLR
 import torch.optim as optim
 from CNN import ErnNet
-from pytorchtools import EarlyStopping
+from model_training import EarlyStopping
 from DatasetCreator import HAVSDataset
 from model_training import ModelTrainer
 
