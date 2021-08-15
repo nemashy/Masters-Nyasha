@@ -128,3 +128,7 @@ class qconv2d(torch.nn.Module):
     def forward(self,inputs):
         return self.qconv(inputs)
 
+
+def get_pytorch_model(weights_path, model):
+    model.load_state_dict(torch.load(weights_path))
+    return model
