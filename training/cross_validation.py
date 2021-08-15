@@ -11,14 +11,14 @@ from DatasetCreator import HAVSDataset
 from model_training import ModelTrainer
 
 def reset_weights(m):
-  '''
-    Try resetting model weights to avoid
-    weight leakage.
-  '''
-  for layer in m.children():
-   if hasattr(layer, 'reset_parameters'):
-    print(f'Reset trainable parameters of layer = {layer}')
-    layer.reset_parameters()
+    '''
+        Try resetting model weights to avoid
+        weight leakage.
+    '''
+    for layer in m.children():
+        if hasattr(layer, 'reset_parameters'):
+            print(f'Reset trainable parameters of layer = {layer}')
+            layer.reset_parameters()
 
 def reset_optimizer(optimizer, lr):
     optimizer.params_groups[0]['lr'] = lr
