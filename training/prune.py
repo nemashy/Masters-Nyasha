@@ -13,6 +13,7 @@ from model_training import *
 # from CNN import ErnNetQAT
 from training_functions import *
 from cross_validation import *
+from utils import get_pytorch_model
 
 config = read_params('training/settings.yaml')
 batch_size = config['batch_size']

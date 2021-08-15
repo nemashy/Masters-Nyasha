@@ -1,7 +1,7 @@
 from torch.nn import parameter
 import torch.nn.utils.prune as prune
 
-from utility_functions import get_pytorch_model
+from utils import get_pytorch_model
 from CNN import ErnNet
 
 weights_path = 'checkpoint.pt'

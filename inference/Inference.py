@@ -5,7 +5,7 @@ import argparse
 from torch2trt import torch2trt
 
 from CNN import ErnNet
-from utility_functions import get_pytorch_model
+from utils import get_pytorch_model
 
 class ModelPerformance:
     """The ModelPerformance class create an object that can be used

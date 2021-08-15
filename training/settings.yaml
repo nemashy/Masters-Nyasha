@@ -1,19 +1,14 @@
 models_path: pass
 compressed_data_path: /media/nyasha/OS/Users/nyasha/Desktop/Masters-Nyasha/Processed Data/processed_data.npz
 
-
-
 # Hyperparameters
-
 batch_size: 16
 lr: 0.0001
 number_epochs: 100
-
 transition_steps: [100]
 gamma_value: 0.8
 
 # Cross Validation Parameters
-
 compressed_cv_data_path: ../Processed Data/processed_data_cv.npz
 num_folds: 5
 
