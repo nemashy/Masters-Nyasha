@@ -80,8 +80,6 @@ class ModelTrainer:
     def __init__(self, model, criterion, data_loaders_and_classes):
         self.model = model
         self.device = get_device()
-        self.model_on_device = model.to(self.device)
-
         self.train_loader = data_loaders_and_classes['train_loader']
         self.val_loader = data_loaders_and_classes['val_loader']
         self.classes = data_loaders_and_classes['classes']
@@ -91,7 +89,8 @@ class ModelTrainer:
         self.scheduler = None
 
     def train_model(self, num_epochs, optimizer):
-        
+
+        self.model.to(self.device)
         writer = SummaryWriter()
         _, optimizer_params_dict = get_info(optimizer)
         num_batches = len(self.train_loader)
@@ -102,7 +101,7 @@ class ModelTrainer:
 
         start = time.time()
         for epoch in range(1, num_epochs + 1):
-            self.model_on_device.train()  # Turn on Dropout, BatchNorm etc
+            self.model.train()  # Turn on Dropout, BatchNorm etc
             train_loss_per_batch = np.empty(num_batches)
             accuracy_per_batch = np.empty(num_batches)
             train_loss = 0
@@ -114,7 +113,7 @@ class ModelTrainer:
                 images = images.to(self.device, dtype=torch.float)
                 labels = labels.to(self.device)
 
-                output = self.model_on_device(images)
+                output = self.model(images)
                 _, predicted = torch.max(output.data, 1)
 
                 correct += (predicted == labels).sum().item()
@@ -135,7 +134,7 @@ class ModelTrainer:
             avg_epoch_accuracy = np.mean(accuracy_per_batch)
 
             val_loss, val_accuracy, _, _, _ = self.evaluate_model(
-                self.model_on_device,
+                self.model,
                 self.val_loader
             )
 
@@ -151,7 +150,7 @@ class ModelTrainer:
             )
 
             # Check early stopping conditions
-            early_stopping(val_loss, self.model_on_device)
+            early_stopping(val_loss, self.model)
             if early_stopping.early_stop:
                 print("Early stopping")
                 break
@@ -161,7 +160,7 @@ class ModelTrainer:
 
         duration_s = stop - start
         writer.add_text("optimzer_parameters", str(optimizer_params_dict))
-        writer.add_text("model", str(self.model_on_device))
+        writer.add_text("model", str(self.model))
         writer.add_text("Duration_s", str(duration_s))
 
         # dummy_data =  torch.randn(256, 1, 128 ,45)
