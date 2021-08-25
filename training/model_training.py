@@ -124,14 +124,15 @@ class ModelTrainer:
                 loss.backward()
                 optimizer.step()
 
-                train_loss += loss.item() / images.shape[0]
+                train_loss += loss.item() * images.shape[0]
                 accuracy = 100 * correct / total
+
 
                 train_loss_per_batch[batch_idx] = train_loss
                 accuracy_per_batch[batch_idx] = accuracy
 
-            avg_epoch_train_loss = np.mean(train_loss_per_batch)
-            avg_epoch_accuracy = np.mean(accuracy_per_batch)
+            epoch_train_loss = train_loss / len(self.train_loader.dataset)
+            epoch_train_accuracy = correct * 100/ len(self.train_loader.dataset)
 
             val_loss, val_accuracy, _, _, _ = self.evaluate_model(
                 self.model,
@@ -141,11 +142,11 @@ class ModelTrainer:
             if self.scheduler is not None:
                 self.scheduler.step()
 
-            write_to_tensorboard(writer, avg_epoch_train_loss, avg_epoch_accuracy, val_loss, val_accuracy, epoch)
+            write_to_tensorboard(writer, epoch_train_loss, epoch_train_accuracy, val_loss, val_accuracy, epoch)
 
             print(
-                "Epoch: {}/{} \t Training Loss: {:.4f}, Accuracy: {:.2f}, Testing Loss: {:.4f}, Accuracy: {:.2f}".format(
-                    epoch, num_epochs, avg_epoch_train_loss, avg_epoch_accuracy, val_loss, val_accuracy
+                "Epoch: {}/{} \t Training Loss: {:.4f}, Accuracy: {:.2f} %, Validation Loss: {:.4f}, Accuracy: {:.2f} %".format(
+                    epoch, num_epochs, epoch_train_loss, epoch_train_accuracy, val_loss, val_accuracy
                 )
             )
 
@@ -192,7 +193,7 @@ class ModelTrainer:
                 total += labels.size(0)
                 correct += (predicted == labels).sum().item()
 
-                running_loss += loss.item()
+                running_loss += loss.item() * images.shape[0]
 
                 labels = labels.cpu()
                 predicted = predicted.cpu()
@@ -201,7 +202,7 @@ class ModelTrainer:
                 y_pred_tot = torch.cat((y_pred_tot, predicted), 0)
 
         accuracy = 100 * correct / total
-        accuracy = 100 * correct / total
+        val_loss = running_loss / len(data_loader.dataset)
         errors = y_pred_tot - y_tot != 0
         y_pred_errors = y_pred_tot[errors]
         y_true_errors = y_tot[errors]
@@ -210,7 +211,7 @@ class ModelTrainer:
         if show_cm:
             self.generate_confusion_matrix(self.classes, y_tot, y_pred_tot)
 
-        return running_loss / num_batches, accuracy, errors, y_pred_errors, y_true_errors
+        return val_loss, accuracy, errors, y_pred_errors, y_true_errors
 
     @staticmethod
     def generate_confusion_matrix(classes, y_tot, y_pred_tot):
@@ -340,9 +341,9 @@ def get_class_weights(y_train, device):
     return class_weights
 
 
-def write_to_tensorboard(writer, avg_epoch_train_loss, avg_epoch_accuracy, val_loss, val_accuracy, epoch):
-    writer.add_scalar("Loss/Train", avg_epoch_train_loss, epoch)
-    writer.add_scalar("Accuracy/Train", avg_epoch_accuracy, epoch)
+def write_to_tensorboard(writer, epoch_train_loss, epoch_train_accuracy, val_loss, val_accuracy, epoch):
+    writer.add_scalar("Loss/Train", epoch_train_loss, epoch)
+    writer.add_scalar("Accuracy/Train", epoch_train_accuracy, epoch)
     writer.add_scalar("Loss/Validation", val_loss, epoch)
     writer.add_scalar("Accuracy/Validation", val_accuracy, epoch)
 

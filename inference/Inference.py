@@ -43,6 +43,10 @@ class ModelPerformance:
         # Wait for all kernels in all streams on the CUDA device to complete.
         torch.cuda.current_stream().synchronize()
 
+        # GPU warmup
+        for _ in range(10):
+            _ = model(self.input_data_batch)
+
         t0 = time.time()
         for _ in range(num_loops):
             _ = model(self.input_data_batch)

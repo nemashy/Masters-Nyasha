@@ -73,12 +73,14 @@ def prune_ernet(model, sparsity):
 def measure_accuracy_ernet(model, criterion, data_loaders_and_classes,model_type):
     """Measure accuracy of a model for different sparsities"""
     model.to('cuda')
-    for sparsity in np.arange(0,0.91,0.01):
+    for sparsity in np.arange(0,0.81,0.01):
         model_copy = copy.deepcopy(model)
         if model_type=='ernet':
             pruned_model = prune_ernet(model_copy, sparsity)
         elif model_type=='resnet':
             pruned_model = prune_resnet(model_copy, sparsity)
+        if sparsity==0.19:
+            torch.save(pruned_model, 'pruned_model.pth')
 
         model_trainer = ModelTrainer(pruned_model, criterion, data_loaders_and_classes)
         
@@ -95,7 +97,7 @@ def plot_results(results):
     # y2 = np.cos(2 * np.pi * x2)
     x, y = zip(*results)
     fig, (ax1) = plt.subplots(1, 1)
-    fig.suptitle('A tale of 2 subplots')
+    fig.suptitle('Results of pruning a model')
 
     ax1.plot(x, y, '-')
     ax1.set_xlabel('Sparsity (%)')
@@ -112,17 +114,18 @@ def main():
 
     device = get_device()
 
-    model_ft = models.resnet18(pretrained=False)
-    num_ftrs = model_ft.fc.in_features
-    model_ft.fc = nn.Linear(num_ftrs, 6)
-    model_ft.conv1 = nn.Conv2d(1, 64, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)
+    # model_ft = models.resnet18(pretrained=False)
+    # num_ftrs = model_ft.fc.in_features
+    # model_ft.fc = nn.Linear(num_ftrs, 6)
+    # model_ft.conv1 = nn.Conv2d(1, 64, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)
 
-    weights_path = 'training/checkpoint.pt'
-    model = get_pytorch_model(weights_path, model_ft) # ErnNet()
+    weights_path = 'training/model_ckpt/ernet.pt'
+   
         # Initialise model
-    # model = ErnNet()
-    # model = get_pytorch_model('checkpoint.pt', model)
+    model = ErnNet()
+
     # Initialising training parameters
+    model = get_pytorch_model(weights_path, model) # ErnNet()
     class_weights = get_class_weights(data['y_train'], device)
     criterion = nn.CrossEntropyLoss(weight=class_weights)
     optimizer = optim.Adam(model.parameters(), lr)
@@ -130,7 +133,7 @@ def main():
     # Scheduling parameters
     scheduler = Scheduler(optimizer, transition_steps, gamma)
     lr_scheduler = scheduler.get_MultiStepLR()
-    results = measure_accuracy_ernet(model, criterion, data_loaders_and_classes,'resnet')
+    results = measure_accuracy_ernet(model, criterion, data_loaders_and_classes,'ernet')
     # for sparsity, accuracy in results:
     #     print(sparsity, accuracy)
 
