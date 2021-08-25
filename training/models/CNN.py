@@ -3,6 +3,7 @@ from torch.quantization import QuantStub, DeQuantStub
 import torch.nn as nn
 import torch.nn.functional as F
 
+
 class ConvNet1(nn.Module):
     def __init__(self):
         super().__init__()
@@ -34,18 +35,19 @@ class ConvNet2(nn.Module):
         self.layer1 = nn.Sequential(
             nn.Conv2d(1, 128, kernel_size=3, stride=1, padding=2),
             nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2))
+            nn.MaxPool2d(kernel_size=2, stride=2),
+        )
         self.layer2 = nn.Sequential(
             nn.Conv2d(128, 128, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2))
+            nn.MaxPool2d(kernel_size=2, stride=2),
+        )
         self.layer3 = nn.Sequential(
             nn.Conv2d(128, 128, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2))
-        self.fc1 = nn.Sequential(
-            nn.Linear(______, 128),
-            nn.ReLU())
+            nn.MaxPool2d(kernel_size=2, stride=2),
+        )
+        self.fc1 = nn.Sequential(nn.Linear(______, 128), nn.ReLU())
         self.fc2 = nn.Linear(128, 6)
 
     def forward(self, x):
@@ -57,6 +59,7 @@ class ConvNet2(nn.Module):
         out = self.fc2(out)
         return out
 
+
 # Convolutional neural network (two convolutional layers)
 class ConvNet3(nn.Module):
     def __init__(self):
@@ -65,31 +68,34 @@ class ConvNet3(nn.Module):
             nn.Conv2d(1, 128, kernel_size=5, stride=1, padding=2),
             nn.BatchNorm2d(128),
             nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2))
+            nn.MaxPool2d(kernel_size=2, stride=2),
+        )
         self.layer2 = nn.Sequential(
             nn.Conv2d(128, 128, kernel_size=3, stride=1, padding=1),
             nn.BatchNorm2d(128),
             nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2))
+            nn.MaxPool2d(kernel_size=2, stride=2),
+        )
         self.layer3 = nn.Sequential(
             nn.Conv2d(128, 128, kernel_size=3, stride=1, padding=1),
             nn.BatchNorm2d(128),
             nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2))
+            nn.MaxPool2d(kernel_size=2, stride=2),
+        )
         self.layer4 = nn.Sequential(
             nn.Conv2d(128, 64, kernel_size=3, stride=1, padding=1),
             nn.BatchNorm2d(64),
             nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2))
+            nn.MaxPool2d(kernel_size=2, stride=2),
+        )
         self.layer5 = nn.Sequential(
             nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1),
             nn.BatchNorm2d(64),
             nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2))
+            nn.MaxPool2d(kernel_size=2, stride=2),
+        )
         self.drop_out = nn.Dropout()
-        self.fc1 = nn.Sequential(
-            nn.Linear(4 * 4 * 64, 128),
-            nn.ReLU())
+        self.fc1 = nn.Sequential(nn.Linear(4 * 4 * 64, 128), nn.ReLU())
         self.fc2 = nn.Linear(128, 6)
 
     def forward(self, x):
@@ -103,6 +109,7 @@ class ConvNet3(nn.Module):
         out = self.fc1(out)
         out = self.fc2(out)
         return out
+
 
 # Batch Norm Model !!!!!!!!!! Correcto
 class ConvNet5(nn.Module):
@@ -124,11 +131,11 @@ class ConvNet5(nn.Module):
 
         self.dropout = nn.Dropout(0.5)
 
-        self.avgpool = nn.AdaptiveAvgPool2d((1,1))
+        self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
 
         # Dense layer 1
         self.fc1 = nn.Linear(64 * 1 * 1, 6)
-        #self.bn3 = nn.BatchNorm1d(128)
+        # self.bn3 = nn.BatchNorm1d(128)
 
         # Dense layer 2
         # self.fc2 = nn.Linear(128, 64)
@@ -145,10 +152,9 @@ class ConvNet5(nn.Module):
 
         x = x.view(-1, 64 * 1 * 1)
 
-        #x = self.avgpool(x)
+        # x = self.avgpool(x)
 
         x = self.fc1(x)
-
 
         # x = self.dropout(x)
         # x = F.relu(self.bn3(self.fc1(x)))
@@ -158,11 +164,13 @@ class ConvNet5(nn.Module):
         # x = self.fc3(x)
         return x
 
+
 # ============= Residual Network =====================
 
 # Residual network model
 class FirstLayer(nn.Module):
     """The layer of the network"""
+
     def __init__(self, num_channels=32):
         super(FirstLayer, self).__init__()
 
@@ -177,21 +185,25 @@ class FirstLayer(nn.Module):
         out = self.bn1(out)
         out = F.relu(out)
         out = self.pool(out)
-        
+
         return out
+
 
 class Block(nn.Module):
     """A block that will be skipped over by the residual connectionS"""
+
     def __init__(self, num_channels=32):
         super(Block, self).__init__()
         self.num_channels = num_channels
-        
+
         # First layer of the block
         self.conv1 = nn.Conv2d(num_channels, num_channels, 1)
         self.bn1 = nn.BatchNorm2d(num_channels)
 
         # Second layer of the block
-        self.conv2 = nn.Conv2d(num_channels, num_channels, kernel_size=3, stride=1, padding=1)
+        self.conv2 = nn.Conv2d(
+            num_channels, num_channels, kernel_size=3, stride=1, padding=1
+        )
         self.bn2 = nn.BatchNorm2d(num_channels)
 
     def forward(self, x):
@@ -205,11 +217,12 @@ class Block(nn.Module):
         out = self.bn2(out)
         out = F.relu(out)
 
-        out += identity # Creating the skip connection
+        out += identity  # Creating the skip connection
 
         return out
 
-class ErnNet(nn.Module): # Enerst Net
+
+class ErnNet(nn.Module):  # Enerst Net
     def __init__(self, num_labels=6):
         super(ErnNet, self).__init__()
         # Network = First layer -> block1 -> block2 ....
@@ -218,11 +231,10 @@ class ErnNet(nn.Module): # Enerst Net
         self.block2 = Block()
         self.block3 = Block()
         self.output_channels = self.block3.num_channels
-    
-        self.avgpool = nn.AdaptiveAvgPool2d((1,1))
+
+        self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.fc1 = nn.Linear(self.output_channels * 1 * 1, num_labels)
 
-    
     def forward(self, x):
         out = self.first_layer(x)
         out = self.block1(out)
@@ -235,9 +247,7 @@ class ErnNet(nn.Module): # Enerst Net
         return out
 
 
-
-
-class ErnNet2(nn.Module): # Enerst Net
+class ErnNet2(nn.Module):  # Enerst Net
     def __init__(self, num_labels=6):
         super(ErnNet2, self).__init__()
         # Network = First layer -> block1 -> block2 ....
@@ -247,11 +257,10 @@ class ErnNet2(nn.Module): # Enerst Net
         self.block3 = Block()
         self.block4 = Block()
         self.output_channels = self.block4.num_channels
-    
-        self.avgpool = nn.AdaptiveAvgPool2d((1,1))
+
+        self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.fc1 = nn.Linear(self.output_channels * 1 * 1, num_labels)
 
-    
     def forward(self, x):
         out = self.first_layer(x)
         out = self.block1(out)
@@ -281,22 +290,22 @@ class Net(nn.Module):
         self.pool1 = nn.MaxPool2d(2, 2)
 
         # Layer 2
-        self.conv2 = nn.Conv2d(input_channels, 2*input_channels, 3)
-        self.bn2 = nn.BatchNorm2d(2*input_channels)
+        self.conv2 = nn.Conv2d(input_channels, 2 * input_channels, 3)
+        self.bn2 = nn.BatchNorm2d(2 * input_channels)
         self.pool2 = nn.MaxPool2d(2, 2)
 
         # Layer 3
-        self.conv3 = nn.Conv2d(2*input_channels, 4*input_channels, 3)
-        self.bn3 = nn.BatchNorm2d(4*input_channels)
+        self.conv3 = nn.Conv2d(2 * input_channels, 4 * input_channels, 3)
+        self.bn3 = nn.BatchNorm2d(4 * input_channels)
         self.pool3 = nn.MaxPool2d(2, 2)
-        
+
         # Global average pool
-        self.avgpool = nn.AdaptiveAvgPool2d((1,1))
+        self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
 
         # Dense layer 1
-        self.output_channels = 4*input_channels
+        self.output_channels = 4 * input_channels
         self.fc1 = nn.Linear(self.output_channels * 1 * 1, num_classes)
-        #self.bn3 = nn.BatchNorm1d(128)
+        # self.bn3 = nn.BatchNorm1d(128)
 
     def forward(self, x):
 
@@ -305,12 +314,10 @@ class Net(nn.Module):
         out = F.relu(out)
         out = self.pool1(out)
 
-
         out = self.conv2(out)
         out = self.bn2(out)
         out = F.relu(out)
         out = self.pool2(out)
-
 
         out = self.conv3(out)
         out = self.bn3(out)
@@ -318,11 +325,12 @@ class Net(nn.Module):
         out = self.pool3(out)
 
         out = self.avgpool(out)
-        
+
         out = out.view(-1, self.output_channels * 1 * 1)
         out = self.fc1(out)
 
         return out
+
 
 # ============= Plain CNN End =============
 
@@ -337,11 +345,11 @@ class ErnNetQAT(nn.Module):
         self.block2 = Block()
         self.block3 = Block()
         self.output_channels = self.block3.num_channels
-    
-        self.avgpool = nn.AdaptiveAvgPool2d((1,1))
+
+        self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.fc1 = nn.Linear(self.output_channels * 1 * 1, num_labels)
         self.dequant = DeQuantStub()
-    
+
     def forward(self, x):
         out = self.quant(x)
         out = self.first_layer(out)

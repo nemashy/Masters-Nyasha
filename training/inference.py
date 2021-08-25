@@ -7,6 +7,7 @@ from torch2trt import torch2trt
 from CNN import ErnNet
 from utility_functions import get_pytorch_model
 
+
 class ModelPerformance:
     """The ModelPerformance class create an object that can be used
     for measuring the performance of a model"""
@@ -18,7 +19,11 @@ class ModelPerformance:
     def get_trt_model(self, precision):
         """Reurns a tensorrt model based on the input precision"""
 
-        assert precision in ['FP32', 'FP16', 'INT8'], "Only FP32, FP16 and INT8 precisions are supported."
+        assert precision in [
+            "FP32",
+            "FP16",
+            "INT8",
+        ], "Only FP32, FP16 and INT8 precisions are supported."
 
         print(f"Generating a TensorRT optimised model in {precision} mode . . . .")
 
@@ -42,11 +47,11 @@ class ModelPerformance:
         """Returns the total inference time on all the loops"""
         # Wait for all kernels in all streams on the CUDA device to complete.
         torch.cuda.current_stream().synchronize()
-        
+
         # GPU warmup
         for _ in range(10):
             _ = model(self.input_data_batch)
-        
+
         t0 = time.time()
         for _ in range(num_loops):
             _ = model(self.input_data_batch)
@@ -54,7 +59,6 @@ class ModelPerformance:
         t1 = time.time()
 
         return t1 - t0
-
 
     def get_throughput(self, num_loops, model):
         """Calculates the average number of images processed per second"""
@@ -107,20 +111,41 @@ class PerfComparison(ModelPerformance):
 
 def parse_opt():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--batch_size', type=int, default=32, help='Batch size for testing e.g 16, 32, 64 and 128')
-    parser.add_argument('--num_loops', type=int, default=1000, help='Number of loops used to calculate the average static')
-    parser.add_argument('--model_object', help='Model object used for initiating the model')
-    parser.add_argument('--weights', type=str, help='weigths.pt file path')
-    parser.add_argument('--img_width', type=int, default=45, help='The width of images used for testing')
-    parser.add_argument('--img_height', type=int, default=128, help='The height of images used for testing')
+    parser.add_argument(
+        "--batch_size",
+        type=int,
+        default=32,
+        help="Batch size for testing e.g 16, 32, 64 and 128",
+    )
+    parser.add_argument(
+        "--num_loops",
+        type=int,
+        default=1000,
+        help="Number of loops used to calculate the average static",
+    )
+    parser.add_argument(
+        "--model_object", help="Model object used for initiating the model"
+    )
+    parser.add_argument("--weights", type=str, help="weigths.pt file path")
+    parser.add_argument(
+        "--img_width", type=int, default=45, help="The width of images used for testing"
+    )
+    parser.add_argument(
+        "--img_height",
+        type=int,
+        default=128,
+        help="The height of images used for testing",
+    )
     return parser.parse_args()
 
 
 def main(opt):
-    
+
     batch_size = opt.batch_size
     num_loops = opt.num_loops
-    dummy_input_batch = torch.rand((batch_size, 1, opt.img_height, opt.img_width)).cuda()
+    dummy_input_batch = torch.rand(
+        (batch_size, 1, opt.img_height, opt.img_width)
+    ).cuda()
 
     # Load model and send to gpu
     unoptim_model = get_pytorch_model(opt.weights, ErnNet())
@@ -134,4 +159,3 @@ def main(opt):
 if __name__ == "__main__":
     opt = parse_opt()
     main(opt)
-

@@ -59,7 +59,7 @@ def train_cae(num_epochs, train_loader, criterion, optimizer, device, model_on_d
 
 
 def display_random_errors(img_errors, pred_errors, obs_errors, dataset):
-    """ This function shows 6 images with their predicted and real labels"""
+    """This function shows 6 images with their predicted and real labels"""
     n = 0
     nrows = 2
     ncols = 5
@@ -216,7 +216,13 @@ def evaluate_model(loader, device, model_on_device, criterion, *args):
             plt.title("Normalized Confusion Matrix For " + args[1] + " Data")
             plt.colorbar()
             plt.show()
-        return running_loss / num_batches, accuracy, errors, y_pred_errors, y_true_errors
+        return (
+            running_loss / num_batches,
+            accuracy,
+            errors,
+            y_pred_errors,
+            y_true_errors,
+        )
 
 
 def get_class_weights(y_train, device):
@@ -317,12 +323,15 @@ def read_params(config_path):
         config = yaml.safe_load(yaml_file)
     return config
 
+
 def get_pytorch_model(weights_path, model):
     model.load_state_dict(torch.load(weights_path))
     return model
 
+
 def main():
     pass
+
 
 if __name__ == "__main__":
     main()

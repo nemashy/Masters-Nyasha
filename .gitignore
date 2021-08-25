@@ -8,11 +8,6 @@ Untitlezd-1.ipynb
 binary tress.ipynb
 Untitled-d1.ipynb
 Untiwtled-1.ipynb
-Images/All Windows.jpg
-Images/Blackman.jpg
-Images/Hamming.jpg
-Images/Hanning.jpg
-Images/Kaiser.jpg
 Images/Rectangular Window.jpg
 training/model_cnn.onnx.png
 training/model_cnn.onnx
@@ -21,7 +16,8 @@ training/model.pth
 Untitlewd-1.ipynb
 Untitled-21.ipynb
 w.ipynb
-random_data/PSNR Results.csv
+Random Data/
+Images
 training/model-fold-0.pth
 training/model-fold-1.pth
 training/model-fold-2.pth
@@ -40,8 +36,6 @@ training/__pycache__/DatasetCreator.cpython-38.pyc
 training/__pycache__/pytorchtools.cpython-38.pyc
 training/__pycache__/training_functions.cpython-38.pyc
 training/__pycache__/DatasetCreator.cpython-38.pyc
-random_data/Test Results.PNG
-random_data/Validation Results.PNG
 training/nyasha.pth
 training/history.py
 training/model-fold-0_2.pth
@@ -83,3 +77,8 @@ Data Pre-processing and EDA/
 training/torch2trt
 training/checkpoint.pt
 training/models/__pycache__
+Random  Data/
+Training/model_ckpt/
+Training/resnet_18_fe_checkpoint.pt
+Training/pruned_model.pth
+new_logs.txt

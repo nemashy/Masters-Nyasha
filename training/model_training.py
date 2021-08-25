@@ -14,6 +14,7 @@ from sklearn.metrics import confusion_matrix
 from torch.optim.lr_scheduler import MultiStepLR
 from sklearn.utils import class_weight
 
+
 def get_device():
     """Checks the device that cuda is running on"""
 
@@ -28,6 +29,7 @@ def get_device():
         print("Running on the CPU")
 
     return device
+
 
 class Scheduler:
     def __init__(self, optimizer, transition_steps, gamma_value):
@@ -50,41 +52,47 @@ class Scheduler:
         # StepLR(optimizer, step_size=10, gamma=0.2, last_epoch=-1, verbose=False)
         # initialize the early_stopping object
 
-class HAVSDataset(Dataset): # Human Activity, Vehicle and Sphere (HAVS)
+
+class HAVSDataset(Dataset):  # Human Activity, Vehicle and Sphere (HAVS)
     """Create a custom dataset"""
 
     def __init__(self, data, targets, transform=None):
         self.data = data
         self.transform = transform
         self.enc = LabelEncoder()
-        targets = self.enc.fit_transform(targets.reshape(-1,))
+        targets = self.enc.fit_transform(
+            targets.reshape(
+                -1,
+            )
+        )
         self.targets = torch.LongTensor(targets)
-        
-    def __getitem__(self, index): # Memory efficient way of getting items
+
+    def __getitem__(self, index):  # Memory efficient way of getting items
         if torch.is_tensor(index):
             index = int(index.item())
-            
+
         x = self.data[index]
         y = self.targets[index]
 
         if self.transform:
             x = self.data[index]
-            x = self.transform(x) # Convert numpy.ndarray to pytorch tensor
+            x = self.transform(x)  # Convert numpy.ndarray to pytorch tensor
 
         return x, y
 
     def __len__(self):
         return len(self.data)
 
+
 class ModelTrainer:
     def __init__(self, model, criterion, data_loaders_and_classes):
         self.model = model
         self.device = get_device()
-        self.train_loader = data_loaders_and_classes['train_loader']
-        self.val_loader = data_loaders_and_classes['val_loader']
-        self.classes = data_loaders_and_classes['classes']
+        self.train_loader = data_loaders_and_classes["train_loader"]
+        self.val_loader = data_loaders_and_classes["val_loader"]
+        self.classes = data_loaders_and_classes["classes"]
         self.criterion = criterion
-        
+
         self.compressed_model = None
         self.scheduler = None
 
@@ -94,9 +102,9 @@ class ModelTrainer:
         writer = SummaryWriter()
         _, optimizer_params_dict = get_info(optimizer)
         num_batches = len(self.train_loader)
-        os.makedirs('model_ckpt', exist_ok=True)
-        model_ckpt_dir = Path('model_ckpt')
-        model_ckpt_path = model_ckpt_dir/'checkpoint.pt'
+        os.makedirs("model_ckpt", exist_ok=True)
+        model_ckpt_dir = Path("model_ckpt")
+        model_ckpt_path = model_ckpt_dir / "checkpoint.pt"
         early_stopping = EarlyStopping(patience=20, verbose=True, path=model_ckpt_path)
 
         start = time.time()
@@ -127,26 +135,36 @@ class ModelTrainer:
                 train_loss += loss.item() * images.shape[0]
                 accuracy = 100 * correct / total
 
-
                 train_loss_per_batch[batch_idx] = train_loss
                 accuracy_per_batch[batch_idx] = accuracy
 
             epoch_train_loss = train_loss / len(self.train_loader.dataset)
-            epoch_train_accuracy = correct * 100/ len(self.train_loader.dataset)
+            epoch_train_accuracy = correct * 100 / len(self.train_loader.dataset)
 
             val_loss, val_accuracy, _, _, _ = self.evaluate_model(
-                self.model,
-                self.val_loader
+                self.model, self.val_loader
             )
 
             if self.scheduler is not None:
                 self.scheduler.step()
 
-            write_to_tensorboard(writer, epoch_train_loss, epoch_train_accuracy, val_loss, val_accuracy, epoch)
+            write_to_tensorboard(
+                writer,
+                epoch_train_loss,
+                epoch_train_accuracy,
+                val_loss,
+                val_accuracy,
+                epoch,
+            )
 
             print(
                 "Epoch: {}/{} \t Training Loss: {:.4f}, Accuracy: {:.2f} %, Validation Loss: {:.4f}, Accuracy: {:.2f} %".format(
-                    epoch, num_epochs, epoch_train_loss, epoch_train_accuracy, val_loss, val_accuracy
+                    epoch,
+                    num_epochs,
+                    epoch_train_loss,
+                    epoch_train_accuracy,
+                    val_loss,
+                    val_accuracy,
                 )
             )
 
@@ -170,8 +188,7 @@ class ModelTrainer:
 
         writer.close()
 
-
-    def evaluate_model(self,model_on_device, data_loader, show_cm=False):
+    def evaluate_model(self, model_on_device, data_loader, show_cm=False):
 
         """Evaluate Performance on test set"""
         model_on_device.eval()  # Turn off gradient computations
@@ -242,19 +259,22 @@ class ModelTrainer:
 
 class EarlyStopping:
     """Early stops the training if validation loss doesn't improve after a given patience."""
-    def __init__(self, patience=7, verbose=False, delta=0, path='checkpoint.pt', trace_func=print):
+
+    def __init__(
+        self, patience=7, verbose=False, delta=0, path="checkpoint.pt", trace_func=print
+    ):
         """
         Args:
             patience (int): How long to wait after last time validation loss improved.
                             Default: 7
-            verbose (bool): If True, prints a message for each validation loss improvement. 
+            verbose (bool): If True, prints a message for each validation loss improvement.
                             Default: False
             delta (float): Minimum change in the monitored quantity to qualify as an improvement.
                             Default: 0
             path (str): Path for the checkpoint to be saved to.
                             Default: 'checkpoint.pt'
             trace_func (function): trace print function.
-                            Default: print            
+                            Default: print
         """
         self.patience = patience
         self.verbose = verbose
@@ -275,7 +295,9 @@ class EarlyStopping:
             self.save_checkpoint(val_loss, model)
         elif score < self.best_score + self.delta:
             self.counter += 1
-            self.trace_func(f'EarlyStopping counter: {self.counter} out of {self.patience}')
+            self.trace_func(
+                f"EarlyStopping counter: {self.counter} out of {self.patience}"
+            )
             if self.counter >= self.patience:
                 self.early_stop = True
         else:
@@ -284,9 +306,11 @@ class EarlyStopping:
             self.counter = 0
 
     def save_checkpoint(self, val_loss, model):
-        '''Saves model when validation loss decrease.'''
+        """Saves model when validation loss decrease."""
         if self.verbose:
-            self.trace_func(f'Validation loss decreased ({self.val_loss_min:.6f} --> {val_loss:.6f}).  Saving model ...')
+            self.trace_func(
+                f"Validation loss decreased ({self.val_loss_min:.6f} --> {val_loss:.6f}).  Saving model ..."
+            )
         torch.save(model.state_dict(), self.path)
         self.val_loss_min = val_loss
 
@@ -304,13 +328,14 @@ def get_train_test_data(compressed_file_path):
 
     return (x_train, x_test, x_val, y_train, y_test, y_val)
 
+
 def get_loaders_and_classes(data, batch_size) -> dict:
     # Define the transforms
     transform = transforms.Compose([transforms.ToTensor()])
     # Create the datasets
-    train_dataset = HAVSDataset(data['x_train'], data['y_train'], transform=transform)
-    val_dataset = HAVSDataset(data['x_val'], data['y_val'], transform=transform)
-    test_dataset = HAVSDataset(data['x_test'], data['y_test'], transform=transform)
+    train_dataset = HAVSDataset(data["x_train"], data["y_train"], transform=transform)
+    val_dataset = HAVSDataset(data["x_val"], data["y_val"], transform=transform)
+    test_dataset = HAVSDataset(data["x_test"], data["y_test"], transform=transform)
     classes = train_dataset.enc.classes_.tolist()
 
     train_idxs = np.arange(0, len(train_dataset))
@@ -328,7 +353,12 @@ def get_loaders_and_classes(data, batch_size) -> dict:
     )
     test_loader = DataLoader(dataset=test_dataset, batch_size=batch_size)
 
-    return {'train_loader':train_loader, 'val_loader':val_loader, 'test_loader':test_loader, 'classes':classes}
+    return {
+        "train_loader": train_loader,
+        "val_loader": val_loader,
+        "test_loader": test_loader,
+        "classes": classes,
+    }
 
 
 def get_class_weights(y_train, device):
@@ -341,11 +371,14 @@ def get_class_weights(y_train, device):
     return class_weights
 
 
-def write_to_tensorboard(writer, epoch_train_loss, epoch_train_accuracy, val_loss, val_accuracy, epoch):
+def write_to_tensorboard(
+    writer, epoch_train_loss, epoch_train_accuracy, val_loss, val_accuracy, epoch
+):
     writer.add_scalar("Loss/Train", epoch_train_loss, epoch)
     writer.add_scalar("Accuracy/Train", epoch_train_accuracy, epoch)
     writer.add_scalar("Loss/Validation", val_loss, epoch)
     writer.add_scalar("Accuracy/Validation", val_accuracy, epoch)
+
 
 def get_info(optimizer):
     optimizer_name = optimizer.__class__.__name__
@@ -358,31 +391,39 @@ def get_info(optimizer):
 
     return optimizer_name, optimizer_params_dict
 
-def display_errors(img_errors, pred_errors, obs_errors, classes, class_of_interest=None):
-    """ This function shows 6 images with their predicted and real labels"""
+
+def display_errors(
+    img_errors, pred_errors, obs_errors, classes, class_of_interest=None
+):
+    """This function shows 6 images with their predicted and real labels"""
     n = 0
     nrows = 2
     ncols = 5
 
     if class_of_interest is not None:
         # Select a specific class
-        img_errors = img_errors[np.where(obs_errors==class_of_interest)]
-        pred_errors = pred_errors[np.where(obs_errors==class_of_interest)]
-        obs_errors = obs_errors[np.where(obs_errors==class_of_interest)]
+        img_errors = img_errors[np.where(obs_errors == class_of_interest)]
+        pred_errors = pred_errors[np.where(obs_errors == class_of_interest)]
+        obs_errors = obs_errors[np.where(obs_errors == class_of_interest)]
 
     errors_idxs = random.sample(range(0, len(img_errors)), len(img_errors))
 
-    fig, ax = plt.subplots(nrows,ncols,sharex=True,sharey=True, figsize=(14,10))
+    fig, ax = plt.subplots(nrows, ncols, sharex=True, sharey=True, figsize=(14, 10))
     for row in range(nrows):
         for col in range(ncols):
             error = errors_idxs[n]
-            ax[row,col].imshow((img_errors[error]).reshape((128,45)), cmap='turbo')
-            ax[row,col].set_title("Predicted label :{}\nTrue label :{}".format( classes[int(pred_errors[error])], classes[int(obs_errors[error])]  ))
+            ax[row, col].imshow((img_errors[error]).reshape((128, 45)), cmap="turbo")
+            ax[row, col].set_title(
+                "Predicted label :{}\nTrue label :{}".format(
+                    classes[int(pred_errors[error])], classes[int(obs_errors[error])]
+                )
+            )
             n += 1
 
 
 def main():
     pass
+
 
 if __name__ == "__main__":
     main()
