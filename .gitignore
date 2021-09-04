@@ -82,3 +82,5 @@ Training/model_ckpt/
 Training/resnet_18_fe_checkpoint.pt
 Training/pruned_model.pth
 new_logs.txt
+Training/bert.ipynb
+Training/prepared.csv
