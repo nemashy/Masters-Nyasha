@@ -26,7 +26,7 @@ class HAVSDataset(Dataset):  # Human Activity, Vehicle and Sphere (HAVS)
 
         if self.transform:
             x = self.data[index]
-            x = self.transform(x)  # Convert numpy.ndarray to pytorch tensor
+            x = self.transform(x)  # Transform data
 
         return x, y
 
