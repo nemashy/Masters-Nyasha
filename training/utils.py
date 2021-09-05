@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import time
 import random
 import yaml
-from DatasetCreator import HAVSDataset
+from custom_dataset import HAVSDataset
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader, dataset
 from model_training import EarlyStopping

@@ -85,3 +85,4 @@ new_logs.txt
 Training/bert.ipynb
 Training/prepared.csv
 training/ernet.pt
+training/settings.yaml

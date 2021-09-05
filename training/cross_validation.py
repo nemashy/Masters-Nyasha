@@ -7,7 +7,7 @@ from torch.optim.lr_scheduler import MultiStepLR
 import torch.optim as optim
 from models.CNN import ErnNet
 from model_training import EarlyStopping
-from DatasetCreator import HAVSDataset
+from custom_dataset import HAVSDataset
 from model_training import ModelTrainer
 
 
