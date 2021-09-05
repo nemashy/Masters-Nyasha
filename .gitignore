@@ -84,3 +84,4 @@ Training/pruned_model.pth
 new_logs.txt
 Training/bert.ipynb
 Training/prepared.csv
+training/ernet.pt
