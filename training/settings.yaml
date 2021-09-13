@@ -1,5 +1,5 @@
 models_path: pass
-compressed_data_path: Processed Data/processed_data.npz
+compressed_data_path: /media/nyasha/OS/Users/nyasha/Desktop/Masters-Nyasha/Processed Data/processed_data.npz
 
 # Hyperparameters
 batch_size: 16

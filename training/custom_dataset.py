@@ -32,3 +32,10 @@ class HAVSDataset(Dataset):  # Human Activity, Vehicle and Sphere (HAVS)
 
     def __len__(self):
         return len(self.data)
+
+def main():
+    pass
+
+
+if __name__ == "__main__":
+    main()
