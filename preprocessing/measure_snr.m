@@ -15,8 +15,9 @@ function [results, stft_data_struct] = measure_peak_snr(fft_lengths, window_leng
         for window_length = window_lengths
             if(window_length <= fft_length)
                 for overlap_fraction = overlap_fractions
-                    for iFile = 55:55 %length(data_files)
+                    for iFile = 54:54 %length(data_files)
                         file_name = data_files(iFile).name;
+                        disp(file_name);
                         trk_data_struct = load_trk_data(data_dir, file_name);
                         stft_data_struct = get_stft_data(trk_data_struct, window_length, overlap_fraction, fft_length, filter_params);
                         psnr = calc_psnr(stft_data_struct);
@@ -42,6 +43,7 @@ function psnr = calc_psnr(spectrograms)
             disp(var(spectrograms(posExample).Data(:)));
             Noise_dB = 10*log10(var(spectrograms(posExample).Data(:)));
         else
+            disp(spectrograms(posExample).Label);
             Current_Max_Level_dB = max(20*log10(abs(spectrograms(posExample).Data)), [], 'all');
             if(Current_Max_Level_dB > maxLevel_dB)
                 maxLevel_dB = Current_Max_Level_dB;           
