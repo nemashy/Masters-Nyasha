@@ -1,9 +1,10 @@
 
 function spectograms_struct = generate_spectrograms(trkdata, window_length, overlap_fraction, fftLength, filter_params)
     if isa(trkdata, 'struct') % Check if the datatype is a 'struct'
-        spectograms_struct = struct('Data',cell(length(trkdata), 1), 'Label', cell(length(trkdata), 1), 'DurationSeconds', cell(length(trkdata), 1));
+        spectograms_struct = struct('Data',cell(length(trkdata), 1), 'Label', cell(length(trkdata), 1), 'DurationSeconds', cell(length(trkdata), 1), 'TimeStamp', cell(length(trkdata), 1));
         for range_bin_pos = 1:length(trkdata) % range_bin_pos = 16
             fs_Hz = trkdata(range_bin_pos).PRF; % sampling frequency = PRF
+            time_stamp = trkdata(range_bin_pos).measurement;
             [IQ_samples, label] = get_IQ_samples(range_bin_pos, trkdata);
             if(nargin == 5) % If there is a filter
                 IQ_samples = filter(filter_params,IQ_samples);
@@ -16,6 +17,8 @@ function spectograms_struct = generate_spectrograms(trkdata, window_length, over
             spectograms_struct(range_bin_pos).Data = S;
             spectograms_struct(range_bin_pos).Label = label;
             spectograms_struct(range_bin_pos).DurationSeconds = T(end);
+            spectograms_struct(range_bin_pos).TimeStamp = time_stamp;
+            
         end
     else
         disp('Needs a struct data type');

@@ -4,7 +4,7 @@ clear;
 params;
 
 % Define storage structure
-processed_data_struct =  struct('Data', {}, 'Label', {}); 
+processed_data_struct =  struct('Data', {}, 'Label', {}, 'TimeStamp', {}); 
 
 % Get file names
 trk_data_struct_files = dir(fullfile(data_dir,'*.mat')); 
@@ -19,7 +19,7 @@ for iFile = 1:length(trk_data_struct_files)
 end
 toc % stop_timer
 
-save('Data\Processed\havsdata.mat', 'processed_data_struct', '-v7.3');
+save('Data\Processed\havsdata_4s_random.mat', 'processed_data_struct', '-v7');
 
 %imagesc(processed_data_struct(12).Data);colorbar;
 

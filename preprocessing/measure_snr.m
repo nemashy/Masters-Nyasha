@@ -15,7 +15,7 @@ function [results, stft_data_struct] = measure_peak_snr(fft_lengths, window_leng
         for window_length = window_lengths
             if(window_length <= fft_length)
                 for overlap_fraction = overlap_fractions
-                    for iFile = 54:54 %length(data_files)
+                    for iFile = 6:6 %length(data_files)
                         file_name = data_files(iFile).name;
                         disp(file_name);
                         trk_data_struct = load_trk_data(data_dir, file_name);
