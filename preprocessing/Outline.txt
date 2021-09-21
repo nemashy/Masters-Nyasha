@@ -1,0 +1,88 @@
+
+-----------------------
+
+Introduction
+	Introduction
+	Motivation
+	Problem statement
+	Objectives
+	Contributions
+	Terms of Reference
+	Scope and Limitations
+	Outline
+	
+-----------------------
+
+Literature Review
+	Literature review
+	Suggested approach
+
+-----------------------
+
+Methodology
+	Pre-processing
+		STFT Analysis
+		SNR Analysis (SNR simulation)
+
+	Exploratory Data Analysis (Spectrogram Analysis)
+		Average analysis
+		Splitting the data
+
+-----------------------
+
+Design
+	CNN 
+		Theory
+		Implementation
+		Baseline Model 
+		Optimisation
+		Results Analysis
+
+	Resnet 
+		Theory
+		Implementation
+		Baseline Model ???
+		Optimisation
+		Results Analysis
+
+	Comparison of results
+		Cross Validation
+		Test Results
+
+-----------------------
+
+Inference
+	Pruning
+		Structured
+		Unstructured
+		Implementation
+		Results
+	Quantisation
+		32 bit
+		16 bit
+		int8
+		Implemenation (TensorRT)
+		Results
+
+
+	Pipeline Inference
+		Python implementation of pipeline
+		Results
+
+-----------------------
+
+Conclusion
+
+-----------------------
+
+Recommendations
+
+-----------------------
+
+Additional research
+	Investigating the effect of randomly selecting segments
+		Analysis
+	Investigating the effect of dwell time (1, 2, 3, 4 and 5 seconds)
+		Analysis
+
+
