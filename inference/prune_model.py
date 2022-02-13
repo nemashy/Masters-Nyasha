@@ -2,10 +2,10 @@ from torch.nn import parameter
 import torch.nn.utils.prune as prune
 
 from utils import get_pytorch_model
-from CNN import ErnNet
+from CNN import Model1
 
 weights_path = "checkpoint.pt"
-model = ErnNet()
+model = Model1()
 
 unpruned_model = get_pytorch_model(weights_path, model)
 

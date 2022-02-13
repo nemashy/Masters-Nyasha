@@ -4,7 +4,7 @@ import torch
 import argparse
 
 from torch2trt import torch2trt
-from CNN import ErnNet
+from CNN import Model1
 from utility_functions import get_pytorch_model
 
 
@@ -148,7 +148,7 @@ def main(opt):
     ).cuda()
 
     # Load model and send to gpu
-    unoptim_model = get_pytorch_model(opt.weights, ErnNet())
+    unoptim_model = get_pytorch_model(opt.weights, Model1())
     unoptim_model.eval().cuda()
 
     # Compare model performances
