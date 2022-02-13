@@ -1,5 +1,8 @@
+Dedicated time during weekdays (10 hours per day)
+Dedicated time during weekends (12 hours)
 
 -----------------------
+Deadline: 4 October
 
 Introduction
 	Introduction
@@ -10,16 +13,55 @@ Introduction
 	Terms of Reference
 	Scope and Limitations
 	Outline
-	
------------------------
-
-Literature Review
-	Literature review
-	Suggested approach
 
 -----------------------
+Deadline: 18 October
+
+Literature Review Allocated time (2 weeks)
+	Literature review (Overview, Summary and Evaluation of work done by others)
+	Suggested approach 
+
+-----------------------
+Deadline: 1 November
 
 Methodology
+
+	Aim of the research
+	How the data was collected
+	How the data was analysed
+	Tools or materials used in the reseearch
+	Rationale for choosing specific methods
+
+	STFT
+		FFT
+		Spectrogram formation
+		SNR
+		
+
+	CNN
+		Plain networks
+		Resnets
+	
+	Inference
+		Pruning
+			Structured
+			Unstructured
+		Quantisation
+			32 bit
+			16 bit
+			int8
+
+	
+	Measures of performance
+		Performance metrics
+		Cross Validation
+
+
+-----------------------
+Deadline: 15 November
+
+Design
+
 	Pre-processing
 		STFT Analysis
 		SNR Analysis (SNR simulation)
@@ -28,20 +70,14 @@ Methodology
 		Average analysis
 		Splitting the data
 
------------------------
-
-Design
 	CNN 
-		Theory
 		Implementation
 		Baseline Model 
 		Optimisation
 		Results Analysis
 
-	Resnet 
-		Theory
+	Resnet
 		Implementation
-		Baseline Model ???
 		Optimisation
 		Results Analysis
 
@@ -50,17 +86,13 @@ Design
 		Test Results
 
 -----------------------
+Deadline: 29 November
 
 Inference
 	Pruning
-		Structured
-		Unstructured
 		Implementation
 		Results
 	Quantisation
-		32 bit
-		16 bit
-		int8
 		Implemenation (TensorRT)
 		Results
 
@@ -70,19 +102,13 @@ Inference
 		Results
 
 -----------------------
+Deadline: 10 December
 
 Conclusion
 
 -----------------------
+Deadline: 10 December
 
 Recommendations
 
 -----------------------
-
-Additional research
-	Investigating the effect of randomly selecting segments
-		Analysis
-	Investigating the effect of dwell time (1, 2, 3, 4 and 5 seconds)
-		Analysis
-
-

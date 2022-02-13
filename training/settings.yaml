@@ -1,12 +1,12 @@
 models_path: pass
-compressed_data_path: ../Processed Data/processed_data_5s.npz
+compressed_data_path: ../Processed Data/processed_data_1s.npz
 
 # Hyperparameters
-batch_size: 16
+batch_size: 32
 lr: 0.0001
 number_epochs: 100
-transition_steps: [10,20,30,40,50,60]
-gamma_value: 0.8
+transition_steps: [10,20,30,40,50,60,70,80,90,100]
+gamma_value: 0.5
 
 # Cross Validation Parameters
 compressed_cv_data_path: ../Processed Data/processed_data_cv.npz

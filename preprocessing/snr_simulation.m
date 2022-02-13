@@ -1,14 +1,13 @@
-
 % Signal to noise ratio
 clear all;
 close all;
 
 % User input parameters
-N = 1024;
+N = 256;
 fs = 500;
 f = 93.75;  % Corresponds exactly to a frequency bin 
             % Explore what happens when f is not aligned to a frequency bin
-SNR_dB = 40; 
+SNR_dB = 100; 
 A_n = 10^(-SNR_dB/20);  
 
 % Compute signal and noise in the time-domain 
@@ -50,6 +49,7 @@ grid on;
 
 % -----------------------------------------------------------------------------------
 % Plot noise in the frequency domain 
+histogram(real(FFT_Noise));
 FFT_Noise_dB = 20*log10(abs(fftshift(FFT_Noise)));
 
 figure; plot(FrequencyAxis_Hz, FFT_Noise_dB);
@@ -63,8 +63,15 @@ disp(['Estimate of SNR in the frequency domain =  ', num2str(Estimate_SNR_FreqDo
 
 % Nyasha to do: Estimate the SNR from SignalPlusNoise and Noise signals only 
 % ----------------------------------------------------------------------------
-SNR_dB = max(FFT_SignalPlus_Noise_dB) - 10*log10(var(FFT_Noise));
-Adjusted_SNR_dB = SNR_dB - 10*log10(N); % Adjusting for the integration gain
+
+
+% --------
+
+% SNR_dB = 10*log10(var(fftshift(FFT_SignalPlusNoise))) - 10*log10(var(FFT_Noise)); % Book Equation 
+SNR_dB = max(FFT_SignalPlus_Noise_dB) - 10*log10(var(FFT_Noise)) - 10*log10(N); % Equation without sources
+
+
+Adjusted_SNR_dB = SNR_dB;  % Adjusting for the integration gain
 
 disp(['Nyasha: Estimate of SNR in the frequency domain =  ', num2str(Adjusted_SNR_dB), ' dB' ])
 

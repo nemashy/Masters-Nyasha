@@ -13,7 +13,7 @@ function spectograms_struct = generate_spectrograms(trkdata, window_length, over
             window = hamming(window_length);
             overlap_length = overlap_fraction * window_length;
             % Get STFT of the example
-            [S, ~, T] = stft(IQ_samples,fs_Hz,'Window',window,'OverlapLength',overlap_length,'FFTLength',fftLength);
+            [S, F, T] = stft(IQ_samples,fs_Hz,'Window',window,'OverlapLength',overlap_length,'FFTLength',fftLength);
             spectograms_struct(range_bin_pos).Data = S;
             spectograms_struct(range_bin_pos).Label = label;
             spectograms_struct(range_bin_pos).DurationSeconds = T(end);
@@ -30,5 +30,6 @@ function [IQ_samples, label] = get_IQ_samples(range_bin_pos, trkdata)
     Q_data = double(1i*trkdata(range_bin_pos).trk_data_imag);
     IQ_samples = I_data + Q_data;
     label = char(trkdata(range_bin_pos).class);
+    disp(label);
 end
     

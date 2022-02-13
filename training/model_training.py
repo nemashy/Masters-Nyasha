@@ -12,7 +12,7 @@ from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from sklearn.metrics import confusion_matrix
 from torch.optim.lr_scheduler import MultiStepLR
-from sklearn.utils import class_weight
+from sklearn.utils import class_weight, validation
 
 
 def get_device():
@@ -107,6 +107,8 @@ class ModelTrainer:
         model_ckpt_path = model_ckpt_dir / "checkpoint.pt"
         early_stopping = EarlyStopping(patience=20, verbose=True, path=model_ckpt_path)
 
+        train_loss_res, train_accuracy_res, validation_loss_res, validation_accuracy_res = [], [], [], []
+
         start = time.time()
         for epoch in range(1, num_epochs + 1):
             self.model.train()  # Turn on Dropout, BatchNorm etc
@@ -133,10 +135,6 @@ class ModelTrainer:
                 optimizer.step()
 
                 train_loss += loss.item() * images.shape[0]
-                accuracy = 100 * correct / total
-
-                train_loss_per_batch[batch_idx] = train_loss
-                accuracy_per_batch[batch_idx] = accuracy
 
             epoch_train_loss = train_loss / len(self.train_loader.dataset)
             epoch_train_accuracy = correct * 100 / len(self.train_loader.dataset)
@@ -148,6 +146,7 @@ class ModelTrainer:
             if self.scheduler is not None:
                 self.scheduler.step()
 
+
             write_to_tensorboard(
                 writer,
                 epoch_train_loss,
@@ -156,6 +155,11 @@ class ModelTrainer:
                 val_accuracy,
                 epoch,
             )
+
+            train_loss_res.append(epoch_train_loss)
+            train_accuracy_res.append(epoch_train_accuracy)
+            validation_loss_res.append(val_loss) 
+            validation_accuracy_res.append(val_accuracy)
 
             print(
                 "Epoch: {}/{} \t Training Loss: {:.4f}, Accuracy: {:.2f} %, Validation Loss: {:.4f}, Accuracy: {:.2f} %".format(
@@ -187,6 +191,8 @@ class ModelTrainer:
         # writer.add_graph(model=model_on_device, input_to_model=dummy_data)
 
         writer.close()
+
+        return train_loss_res, train_accuracy_res, validation_loss_res, validation_accuracy_res
 
     def evaluate_model(self, model_on_device, data_loader, show_cm=False):
 
@@ -240,9 +246,10 @@ class ModelTrainer:
         plt.figure(figsize=(12, 12))
         cm = confusion_matrix(y_tot.numpy(), y_pred_tot.numpy(), normalize="true")
         plt.imshow(cm, cmap=plt.cm.Blues)
-
+        thresh = cm / 2
         for (i, j), z in np.ndenumerate(cm):
-            plt.text(j, i, "{:0.3f}".format(z), ha="center", va="center")
+            plt.text(j, i, "{:0.3f}".format(z), ha="center", va="center",
+            color="white" if  cm[i, j] == 0 or cm[i, j] > thresh else "black")
 
         plt.xticks(range(num_classes))
         plt.yticks(range(num_classes))
