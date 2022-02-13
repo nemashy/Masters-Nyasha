@@ -14,6 +14,29 @@ from sklearn.metrics import confusion_matrix
 from torch.optim.lr_scheduler import MultiStepLR
 
 
+class TrainTestData:
+    """Prepare data for cross-validation"""
+
+    def __init__(self, x_data, y_data):
+        self.x_data = x_data
+        self.y_data = y_data
+
+    def get_dataset(self):
+        transform = transforms.Compose([transforms.ToTensor()])
+        return HAVSDataset(self.x_data, self.y_data, transform=transform)
+
+
+def reset_weights(m):
+    """
+    Try resetting model weights to avoid
+    weight leakage during cross-validation.
+    """
+    for layer in m.children():
+        if hasattr(layer, "reset_parameters"):
+            print(f"Reset trainable parameters of layer = {layer}")
+            layer.reset_parameters()
+
+
 def get_device():
     """Checks the device that cuda is running on"""
 

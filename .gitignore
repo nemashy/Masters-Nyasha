@@ -129,12 +129,12 @@ training/models/__pycache__/__init__.cpython-38.pyc
 training/models/__pycache__/CNN.cpython-38.pyc
 Training/cae_training.ipynb
 Training/cross_validation.py
-Training/model_training.py
 Training/prune_test.ipynb
 Training/prune.py
 Training/quantisation_functions.py
 Training/testing.ipynb
 Training/vit_training.ipynb
-Training/custom_dataset.py
 Training/.ipynb_checkpoints
 simulation/runs
+Training/models/CAE.py
+Training/models/ViT.py

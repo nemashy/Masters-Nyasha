@@ -31,7 +31,7 @@ class Model1(nn.Module):
             nn.MaxPool2d(kernel_size=2, stride=2),
         )
         self.drop_out = nn.Dropout()
-        self.fc1 = nn.Sequential(nn.Linear(4 * 4 * 64, 128), nn.ReLU())
+        self.fc1 = nn.Sequential(nn.Linear(256, 128), nn.ReLU())
         self.fc2 = nn.Linear(128, 6)
 
     def forward(self, x):
@@ -40,7 +40,7 @@ class Model1(nn.Module):
         out = self.layer3(out)
         out = self.layer4(out)
         out = self.layer5(out)
-        out = out.reshape(out.size(0), -1)
+        out = out.view(-1, 256)
         out = self.drop_out(out)
         out = self.fc1(out)
         out = self.fc2(out)
